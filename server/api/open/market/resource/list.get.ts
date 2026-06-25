@@ -1,6 +1,6 @@
 /**
  * 代理调用维表智联市场资源列表接口
- * GET /api/dimens/market/resource/list?page=1&size=40&sideFilter=all&teamId=TTFFEN&keyword=xxx
+ * GET /api/open/market/resource/list?page=1&size=40&sideFilter=all&teamId=TTFFEN&keyword=xxx
  */
 export default defineEventHandler(async (event) => {
   const baseUrl = getDimensMarketBaseUrl()
@@ -10,11 +10,11 @@ export default defineEventHandler(async (event) => {
   const page = Number(query.page) || 1
   const size = Number(query.size) || 40
   const sideFilter = (query.sideFilter as string) || 'all'
-  const teamId = (query.teamId as string) || 'TTFFEN'
+  const teamId = (query.teamId as string) || getDimensTeamId()
   const keyword = (query.keyword as string) || ''
 
   try {
-    const data = await $fetch(`${baseUrl}/app/market/resource/list`, {
+    const data = await $fetch(`${baseUrl}/open/market/resource/list`, {
       method: 'GET',
       params: {
         page,

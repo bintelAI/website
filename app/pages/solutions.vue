@@ -38,7 +38,7 @@ const searchKeyword = ref('')
 const searchInput = ref('')
 const isSearching = ref(false)
 
-const { data: marketData, pending, error, refresh } = await useFetch<MarketResponse>('/api/dimens/market/resource/list', {
+const { data: marketData, pending, error, refresh } = await useFetch<MarketResponse>('/api/open/market/resource/list', {
   params: computed(() => ({
     page: currentPage.value,
     size: PAGE_SIZE,

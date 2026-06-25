@@ -6,7 +6,7 @@ import { createSDK } from '@bintel/dimens-cli'
  * - token 由调用方传入，不在此处硬编码
  */
 export function useDimensSDK(token?: string) {
-  const baseUrl = process.env.DIMENS_BASE_URL || 'http://127.0.0.1:8001'
+  const baseUrl = getDimensBaseUrl()
   return createSDK({ baseUrl, token: token || '' })
 }
 
@@ -18,6 +18,22 @@ export function getDimensBaseUrl() {
 }
 
 /**
+ * 获取团队 ID（团队隔离边界）
+ * 如需切换团队，可覆盖此环境变量
+ */
+export function getDimensTeamId() {
+  return process.env.DIMENS_TEAM_ID || ''
+}
+
+/**
+ * 获取项目 ID（项目资源上下文）
+ * 如需切换项目，可覆盖此环境变量
+ */
+export function getDimensProjectId() {
+  return process.env.DIMENS_PROJECT_ID || ''
+}
+
+/**
  * 获取 dimens 市场接口的 token（服务端环境变量）
  */
 export function getDimensMarketToken() {
@@ -26,7 +42,8 @@ export function getDimensMarketToken() {
 
 /**
  * 维表智联线上市场 API 基础 URL
+ * 默认与 DIMENS_BASE_URL 一致，也可单独通过 DIMENS_MARKET_BASE_URL 覆盖
  */
 export function getDimensMarketBaseUrl() {
-  return 'https://dimens.bintelai.com/api'
+  return process.env.DIMENS_MARKET_BASE_URL || getDimensBaseUrl()
 }
