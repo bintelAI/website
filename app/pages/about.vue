@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { teamMembers } from '~/constants'
 definePageMeta({ layout: 'default' })
+
+useSeo({
+  title: '关于我们',
+  description: '了解更多关于方块智联的核心团队与企业文化，我们是一群热爱技术与创新的伙伴，共同致力于数据智能的探索。',
+  keywords: ['方块智联', '企业介绍', '核心团队', '公司文化', '技术团队'],
+})
 </script>
 
 <template>

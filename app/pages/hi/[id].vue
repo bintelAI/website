@@ -10,6 +10,10 @@ watchEffect(() => {
 definePageMeta({
   layout: 'home',
 })
+
+useHead({
+  title: `Hi ${name} | 方块智联`,
+})
 </script>
 
 <template>

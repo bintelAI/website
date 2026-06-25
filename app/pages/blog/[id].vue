@@ -10,6 +10,17 @@ const post = computed(() => {
   return blogPosts.find(p => p.id === id.value)
 })
 
+watchEffect(() => {
+  if (post.value) {
+    useSeo({
+      title: post.value.title,
+      description: post.value.description,
+      keywords: post.value.tags,
+      ogImage: post.value.coverImage,
+    })
+  }
+})
+
 const categoryStyles: Record<string, string> = {
   '产品动态': 'bg-blue-100 text-blue-700',
   '行业应用': 'bg-emerald-100 text-emerald-700',

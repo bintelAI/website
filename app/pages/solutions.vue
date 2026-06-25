@@ -31,6 +31,12 @@ interface MarketResponse {
 
 definePageMeta({ layout: 'default' })
 
+useSeo({
+  title: '解决方案',
+  description: '方块智联提供数据与知识管理、智能营销、智能运维等全行业解决方案，助力企业数字化转型。',
+  keywords: ['方块智联', '解决方案', '数据管理', '智能营销', '智能运维', '企业数字化'],
+})
+
 const PAGE_SIZE = 40
 const currentPage = ref(1)
 const activeFilter = ref('all')

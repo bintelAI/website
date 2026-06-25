@@ -1,5 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
+
+useSeo({
+  title: '联系我们',
+  description: '与方块智联取得联系，获取企业级智能协作平台的咨询与试用服务。',
+  keywords: ['方块智联', '联系我们', '商务咨询', '产品试用', '企业合作'],
+})
 </script>
 
 <template>

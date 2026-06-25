@@ -5,6 +5,13 @@ definePageMeta({
   layout: 'default',
 })
 
+useSeo({
+  title: '产品中心',
+  description: '方块智联全栈产品体系 — 从核心平台到行业方案，覆盖数据管理、AI 自动化、低代码开发与智能运维全场景。',
+  keywords: ['方块智联', '产品中心', '维表智联', 'Dimens', 'Appthen', 'AI工作流', '多维表格', '数字化大屏'],
+  ogImage: '/static/AI维表.jpeg',
+})
+
 const activeTab = ref<'all' | 'core' | 'enterprise' | 'industry'>('all')
 const searchTerm = ref('')
 

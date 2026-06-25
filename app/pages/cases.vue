@@ -4,6 +4,12 @@ import { caseStudies } from '~/constants'
 definePageMeta({
   layout: 'default',
 })
+
+useSeo({
+  title: '客户案例',
+  description: '见证 500+ 行业领军企业如何通过方块智联实现业务飞跃，查看各行业客户成功案例。',
+  keywords: ['方块智联', '客户案例', '成功案例', '企业合作', '数字化转型'],
+})
 </script>
 
 <template>

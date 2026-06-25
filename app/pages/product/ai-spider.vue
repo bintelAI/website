@@ -6,6 +6,17 @@ definePageMeta({
 })
 
 const product = computed(() => productDetails.find(p => p.id === 'collector')!)
+
+watchEffect(() => {
+  if (product.value) {
+    useSeo({
+      title: product.value.title,
+      description: product.value.description,
+      keywords: product.value.tags,
+      ogImage: product.value.imageUrl,
+    })
+  }
+})
 </script>
 
 <template>

@@ -4,6 +4,13 @@ import { productDetails } from '~/constants'
 definePageMeta({ layout: 'default' })
 
 const product = productDetails.find(p => p.id === 'apisql')!
+
+useSeo({
+  title: product.title,
+  description: product.description,
+  keywords: product.tags,
+  ogImage: product.imageUrl,
+})
 </script>
 
 <template>

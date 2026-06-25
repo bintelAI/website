@@ -12,6 +12,17 @@ const product = computed(() => {
   return productDetails.find(p => p.id === id.value)
 })
 
+watchEffect(() => {
+  if (product.value) {
+    useSeo({
+      title: product.value.title,
+      description: product.value.description,
+      keywords: product.value.tags,
+      ogImage: product.value.imageUrl,
+    })
+  }
+})
+
 const isAppthen = computed(() => id.value === 'appthen')
 const isOpsIntelligence = computed(() => id.value === 'ops')
 

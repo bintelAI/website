@@ -3,11 +3,14 @@ import { productDetails } from '~/constants'
 
 definePageMeta({ layout: 'default' })
 
-useHead({
-  title: '维表智联 Dimens - 方块智联',
-})
-
 const product = productDetails.find(p => p.id === 'dimens')!
+
+useSeo({
+  title: product.title,
+  description: product.description,
+  keywords: product.tags,
+  ogImage: product.imageUrl,
+})
 
 interface Layer {
   name: string

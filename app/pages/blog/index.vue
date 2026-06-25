@@ -3,6 +3,12 @@ import { blogPosts } from '~/constants'
 
 definePageMeta({ layout: 'default' })
 
+useSeo({
+  title: '技术博客',
+  description: '掌握行业前沿资讯，了解方块智联最新技术进展与产品动态。涵盖产品动态、行业应用、技术洞察等分类。',
+  keywords: ['方块智联', '技术博客', '产品动态', '行业洞察', 'AI技术'],
+})
+
 const activeCategory = ref('全部')
 
 const categories = computed(() => {

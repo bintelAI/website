@@ -3,6 +3,12 @@ definePageMeta({
   layout: 'default',
 })
 
+useSeo({
+  title: '设置',
+  description: '方块智联官网设置页面',
+  keywords: ['方块智联', '设置'],
+})
+
 const language = ref<'zh' | 'en'>('zh')
 const emailNotify = ref(true)
 const siteNotify = ref(true)

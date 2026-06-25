@@ -1,5 +1,10 @@
 <script setup lang="ts">
 const router = useRouter()
+
+useSeo({
+  title: '页面未找到',
+  description: '您访问的页面不存在',
+})
 </script>
 
 <template>
