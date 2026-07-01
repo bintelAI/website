@@ -1,101 +1,145 @@
 <script setup lang="ts">
-import { teamMembers } from '~/constants'
 definePageMeta({ layout: 'default' })
 
+const { locale, messages } = useLocale()
+const teamMembers = computed(() => messages.value.data.team)
+
 useSeo({
-  title: '关于我们',
-  description: '了解更多关于方块智联的核心团队与企业文化，我们是一群热爱技术与创新的伙伴，共同致力于数据智能的探索。',
-  keywords: ['方块智联', '企业介绍', '核心团队', '公司文化', '技术团队'],
+  title: messages.value.aboutPage.seoTitle,
+  description: messages.value.aboutPage.seoDescription,
+  keywords: [messages.value.common.siteName, messages.value.aboutPage.teamTitle],
+  locale: locale.value,
+  siteName: messages.value.common.siteName,
 })
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex flex-col items-center">
-    <Reveal>
+  <div class="bg-white flex flex-col min-h-screen items-center">
+    <Reveal variant="scale">
       <CompanyIntro />
     </Reveal>
-    <Reveal width="100%">
+    <Reveal variant="left" width="100%">
       <DualEngine />
     </Reveal>
-    <Reveal width="100%">
+    <Reveal variant="right" width="100%">
       <TrafficMatrix />
     </Reveal>
-    <Reveal width="100%">
+    <Reveal variant="up" width="100%">
       <AiGrowth />
     </Reveal>
     <!-- Team Section -->
     <section class="py-16 bg-slate-50">
-      <div class="max-w-7xl mx-auto px-6">
+      <div class="mx-auto px-6 max-w-7xl">
         <Reveal>
-          <div class="text-center mb-12">
-            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">核心团队</h2>
-            <p class="text-lg text-slate-500 max-w-2xl mx-auto">一群热爱技术与创新的伙伴，共同致力于数据智能的探索</p>
-          </div>
-          <div class="grid md:grid-cols-4 gap-6 text-center">
-            <div v-for="member in teamMembers" :key="member.name" class="group cursor-pointer">
-              <div class="w-32 h-32 mx-auto bg-gray-100 rounded-full mb-4 overflow-hidden shadow-md border-4 border-white group-hover:border-blue-100 transition-all">
-                <img :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.name}`" :alt="member.name" class="w-full h-full object-cover">
-              </div>
-              <h4 class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ member.name }}</h4>
-              <p class="text-sm text-slate-500 mb-2">{{ member.role }}</p>
-              <p class="text-xs text-slate-400 max-w-[150px] mx-auto">{{ member.description }}</p>
-            </div>
+          <div class="mb-12 text-center">
+            <h2 class="animate-text-shimmer text-3xl text-transparent font-bold mb-4 from-slate-900 to-slate-900 via-blue-500 bg-gradient-to-r bg-clip-text sm:text-4xl">
+              {{ messages.aboutPage.teamTitle }}
+            </h2>
+            <p class="text-lg text-slate-500 mx-auto max-w-2xl">
+              {{ messages.aboutPage.teamSubtitle }}
+            </p>
           </div>
         </Reveal>
+        <div class="text-center gap-6 grid md:grid-cols-4">
+          <Reveal
+            v-for="(member, index) in teamMembers"
+            :key="member.name"
+            variant="scale"
+            :delay="index * 0.1"
+            width="100%"
+          >
+            <div class="group h-full cursor-pointer">
+              <div class="mx-auto mb-4 border-4 border-white rounded-full bg-gray-100 h-32 w-32 shadow-md transition-all overflow-hidden group-hover:border-blue-100">
+                <img :src="`https://api.dicebear.com/7.x/avataaars/svg?seed=${member.name}`" :alt="member.name" class="h-full w-full transition-transform duration-300 object-cover group-hover:scale-110">
+              </div>
+              <h4 class="text-slate-900 font-bold transition-colors group-hover:text-blue-600">
+                {{ member.name }}
+              </h4>
+              <p class="text-sm text-slate-500 mb-2">
+                {{ member.role }}
+              </p>
+              <p class="text-xs text-slate-400 mx-auto max-w-[150px]">
+                {{ member.description }}
+              </p>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
 
     <!-- Contact Section -->
-    <section class="border-t border-gray-100 py-16 bg-white">
-      <div class="max-w-7xl mx-auto px-6">
+    <section class="py-16 border-t border-gray-100 bg-white">
+      <div class="mx-auto px-6 max-w-7xl">
         <Reveal>
-          <div class="text-center mb-12">
-            <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">联系我们</h2>
-            <p class="text-lg text-slate-500">我们期待听到您的声音</p>
+          <div class="mb-12 text-center">
+            <h2 class="animate-text-shimmer text-3xl text-transparent font-bold mb-4 from-slate-900 to-slate-900 via-blue-500 bg-gradient-to-r bg-clip-text sm:text-4xl">
+              {{ messages.aboutPage.contactTitle }}
+            </h2>
+            <p class="text-lg text-slate-500">
+              {{ messages.aboutPage.contactSubtitle }}
+            </p>
           </div>
-          <div class="grid lg:grid-cols-2 gap-12">
-            <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
-              <h3 class="text-xl font-bold text-slate-900 mb-8">联系方式</h3>
+          <div class="gap-12 grid lg:grid-cols-2">
+            <div class="p-8 border border-gray-100 rounded-2xl bg-gray-50 h-full shadow-sm">
+              <h3 class="text-xl text-slate-900 font-bold mb-8">
+                {{ messages.contactPage.contactInfo }}
+              </h3>
               <div class="space-y-8">
-                <div class="flex items-start">
-                  <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-600 shrink-0 mr-4 shadow-sm">
+                <div class="group flex items-start">
+                  <div class="text-blue-600 mr-4 rounded-full bg-white flex shrink-0 h-12 w-12 shadow-sm transition-transform duration-300 items-center justify-center group-hover:rotate-6 group-hover:scale-110">
                     <span class="i-carbon-location text-xl" />
                   </div>
                   <div>
-                    <h4 class="font-bold text-slate-900 mb-1">公司地址</h4>
-                    <p class="text-slate-600">江西省南昌市中兴软件园 507 室</p>
+                    <h4 class="text-slate-900 font-bold mb-1">
+                      {{ messages.contactPage.addressLabel }}
+                    </h4>
+                    <p class="text-slate-600">
+                      {{ messages.contactPage.addressValue }}
+                    </p>
                   </div>
                 </div>
-                <div class="flex items-start">
-                  <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-purple-600 shrink-0 mr-4 shadow-sm">
+                <div class="group flex items-start">
+                  <div class="text-purple-600 mr-4 rounded-full bg-white flex shrink-0 h-12 w-12 shadow-sm transition-transform duration-300 items-center justify-center group-hover:rotate-6 group-hover:scale-110">
                     <span class="i-carbon-logo-wechat text-xl" />
                   </div>
                   <div>
-                    <h4 class="font-bold text-slate-900 mb-1">联系微信</h4>
-                    <p class="text-slate-600">l4537459</p>
-                    <img src="/static/wechat1.png" alt="微信二维码" class="w-24 h-24 rounded-lg shadow-sm border border-gray-100 mt-2">
+                    <h4 class="text-slate-900 font-bold mb-1">
+                      {{ messages.contactPage.wechatLabel }}
+                    </h4>
+                    <p class="text-slate-600">
+                      l4537459
+                    </p>
+                    <img src="/static/wechat1.png" :alt="messages.contactPage.wechatLabel" class="mt-2 border border-gray-100 rounded-lg h-24 w-24 shadow-sm">
                   </div>
                 </div>
-                <div class="flex items-start">
-                  <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-green-600 shrink-0 mr-4 shadow-sm">
+                <div class="group flex items-start">
+                  <div class="text-green-600 mr-4 rounded-full bg-white flex shrink-0 h-12 w-12 shadow-sm transition-transform duration-300 items-center justify-center group-hover:rotate-6 group-hover:scale-110">
                     <span class="i-carbon-mail-all text-xl" />
                   </div>
                   <div>
-                    <h4 class="font-bold text-slate-900 mb-1">商务邮箱</h4>
-                    <p class="text-slate-600">lixiang@bintelai.com</p>
+                    <h4 class="text-slate-900 font-bold mb-1">
+                      {{ messages.contactPage.emailLabel }}
+                    </h4>
+                    <p class="text-slate-600">
+                      lixiang@bintelai.com
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 flex flex-col items-center justify-center text-center">
-              <h3 class="text-xl font-bold text-slate-900 mb-6">扫码咨询或在线填写</h3>
-              <div class="mb-8 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                <img src="/static/表单.png" alt="咨询二维码" class="w-48 h-48 object-contain mx-auto shadow-sm">
-                <p class="text-sm text-slate-500 mt-4">扫描上方二维码快速咨询</p>
+            <div class="p-8 text-center border border-gray-100 rounded-2xl bg-white flex flex-col shadow-lg items-center justify-center">
+              <h3 class="text-xl text-slate-900 font-bold mb-6">
+                {{ messages.contactPage.qrConsultTitle }}
+              </h3>
+              <div class="mb-8 p-4 border border-gray-200 rounded-2xl border-dashed bg-gray-50">
+                <img src="/static/表单.png" :alt="messages.contactPage.qrConsultTitle" class="mx-auto h-48 w-48 shadow-sm object-contain">
+                <p class="text-sm text-slate-500 mt-4">
+                  {{ messages.contactPage.qrConsultDesc }}
+                </p>
               </div>
               <a href="https://icn0866todip.feishu.cn/share/base/form/shrcnUHjyb4TY05cVEBXe1UitFf" target="_blank" rel="noopener noreferrer" class="w-full">
-                <button class="w-full py-4 text-lg bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition-all shadow-lg shadow-blue-500/30">
-                  咨询填写
+                <button class="text-lg text-white font-medium py-4 rounded-lg bg-blue-600 w-full shadow-blue-500/30 shadow-lg transition-all hover:bg-blue-700">
+                  {{ messages.contactPage.qrConsultButton }}
                 </button>
               </a>
             </div>

@@ -1,10 +1,8 @@
 import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
+import { createEnglishRoutes } from './app/utils/localized-routes'
 
 export default defineNuxtConfig({
-  devServer: {
-    port: 3333,
-  },
 
   modules: [
     '@vueuse/nuxt',
@@ -20,6 +18,9 @@ export default defineNuxtConfig({
   },
 
   app: {
+    // 全局页面过渡：配合 app/assets/css/animations.css 中的 .page-enter/leave
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
     head: {
       viewport: 'width=device-width,initial-scale=1',
       link: [
@@ -37,8 +38,14 @@ export default defineNuxtConfig({
     },
   },
 
+  // 全局动画关键帧库（CSS-first，零运行时依赖）
+  css: ['~/assets/css/animations.css'],
+
   colorMode: {
     classSuffix: '',
+  },
+  devServer: {
+    port: 3333,
   },
 
   future: {
@@ -66,6 +73,10 @@ export default defineNuxtConfig({
       routes: ['/'],
       ignore: ['/hi'],
     },
+  },
+
+  hooks: {
+    'pages:extend': createEnglishRoutes,
   },
 
   eslint: {

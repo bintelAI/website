@@ -172,6 +172,14 @@ pnpm preview
 ```bash
 docker build -t web-official .
 docker run -p 3000:3000 web-official
+
+mmac 打包
+docker buildx build --platform linux/amd64 -t bintelweb:v1.0 --load .
+
+
+docker buildx build --pull=false --platform linux/amd64 -t registry.cn-hangzhou.aliyuncs.com/eagleme/bintel_web:v12 --push .
+
+
 ```
 
 ## 环境变量

@@ -85,6 +85,12 @@ const layers: Layer[] = [
     ],
   },
 ]
+
+// 四层架构各自入场策略：LAYER1/4 scale，LAYER2 left，LAYER3 right
+const layerVariant = (level: number): 'scale' | 'left' | 'right' => {
+  const map = { 1: 'scale', 2: 'left', 3: 'right', 4: 'scale' } as const
+  return map[level as 1 | 2 | 3 | 4]
+}
 </script>
 
 <template>
@@ -98,10 +104,11 @@ const layers: Layer[] = [
       <!-- Section Header -->
       <div class="mb-20 text-center">
         <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-700/30 bg-blue-900/30 px-4 py-1.5 text-sm font-bold text-blue-300">
+          <span class="h-1.5 w-1.5 rounded-full bg-blue-400 animate-breathe" />
           <span class="i-carbon-architecture text-lg" />
           Dimens 产品架构
         </div>
-        <h2 class="mb-4 text-3xl font-bold text-white sm:text-4xl md:text-5xl">
+        <h2 class="mb-4 text-3xl font-bold bg-gradient-to-r from-blue-400 via-cyan-300 to-white bg-clip-text text-transparent animate-text-shimmer sm:text-4xl md:text-5xl">
           四层架构体系
         </h2>
         <p class="mx-auto max-w-2xl text-lg text-slate-400">
@@ -112,7 +119,7 @@ const layers: Layer[] = [
       <!-- Architecture Layers -->
       <div class="relative mx-auto max-w-5xl">
         <!-- 中央连接线 -->
-        <div class="absolute bottom-24 left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-blue-500/20 via-purple-500/30 to-rose-500/40 lg:block" />
+        <div class="absolute bottom-24 left-1/2 top-0 hidden w-px -translate-x-1/2 bg-gradient-to-b from-blue-500/20 via-purple-500/30 to-rose-500/40 animate-gradient lg:block" />
 
         <div class="space-y-10 lg:space-y-14">
           <template v-for="(layer, idx) in layers" :key="layer.level">
@@ -130,14 +137,14 @@ const layers: Layer[] = [
             </div>
 
             <!-- Layer Card -->
-            <Reveal :delay="(layer.level - 1) * 0.1" direction="up" width="100%">
+            <Reveal :delay="(layer.level - 1) * 0.1" :variant="layerVariant(layer.level)" width="100%">
               <div
                 class="group relative overflow-hidden rounded-2xl border bg-gradient-to-br transition-all duration-500 hover:-translate-y-1"
                 :class="[layer.bgGradient, layer.borderGlow]"
               >
-                <!-- 背景光晕 -->
+                <!-- 背景光晕（hover 时呼吸） -->
                 <div
-                  class="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full opacity-0 transition-opacity duration-500 group-hover:opacity-30 blur-3xl"
+                  class="layer-glow pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full blur-3xl"
                   :class="layer.accent"
                 />
 
@@ -151,7 +158,7 @@ const layers: Layer[] = [
                 <div class="border-b border-slate-700/30 p-6 sm:p-8">
                   <div class="flex items-center gap-4">
                     <div
-                      class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-lg transition-transform duration-500 group-hover:scale-110"
+                      class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12"
                       :class="layer.accent"
                     >
                       <span :class="[layer.icon, 'text-xl']" />
@@ -175,49 +182,55 @@ const layers: Layer[] = [
                     'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3': layer.columns === 3,
                   }"
                 >
-                  <div
+                  <Reveal
                     v-for="item in layer.items"
                     :key="item.label"
-                    class="group/item relative overflow-hidden rounded-xl border bg-slate-900/40 p-4 transition-all duration-300 hover:bg-slate-800/60"
-                    :class="[
-                      item.highlight
-                        ? 'border-amber-500/30 hover:border-amber-400/60'
-                        : 'border-slate-700/50 hover:border-slate-600/60',
-                    ]"
+                    :variant="item.highlight ? 'scale' : 'none'"
+                    :delay="(layer.level - 1) * 0.1 + (item.highlight ? 0.4 : 0)"
+                    width="100%"
                   >
-                    <!-- Highlight glow -->
                     <div
-                      v-if="item.highlight"
-                      class="pointer-events-none absolute -right-8 -top-8 h-16 w-16 rounded-full bg-amber-500/10 blur-2xl"
-                    />
+                      class="group/item relative overflow-hidden rounded-xl border bg-slate-900/40 p-4 transition-all duration-300 hover:bg-slate-800/60"
+                      :class="[
+                        item.highlight
+                          ? 'border-amber-500/30 hover:border-amber-400/60'
+                          : 'border-slate-700/50 hover:border-slate-600/60',
+                      ]"
+                    >
+                      <!-- Highlight glow -->
+                      <div
+                        v-if="item.highlight"
+                        class="pointer-events-none absolute -right-8 -top-8 h-16 w-16 rounded-full bg-amber-500/10 blur-2xl"
+                      />
 
-                    <div class="relative z-10">
-                      <div class="mb-2 flex items-center gap-2">
-                        <span
-                          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base"
-                          :class="item.highlight ? 'bg-gradient-to-br from-amber-500/20 to-amber-600/20 text-amber-400' : 'bg-slate-700/50 text-slate-400'"
-                        >
-                          <span :class="item.icon" />
-                        </span>
-                        <span
-                          class="text-sm font-bold leading-tight"
-                          :class="item.highlight ? 'text-amber-200' : 'text-slate-200'"
-                        >
-                          {{ item.label }}
-                        </span>
-                        <!-- Highlight badge -->
-                        <span
-                          v-if="item.highlight"
-                          class="ml-auto shrink-0 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300"
-                        >
-                          CORE
-                        </span>
+                      <div class="relative z-10">
+                        <div class="mb-2 flex items-center gap-2">
+                          <span
+                            class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base"
+                            :class="item.highlight ? 'bg-gradient-to-br from-amber-500/20 to-amber-600/20 text-amber-400' : 'bg-slate-700/50 text-slate-400'"
+                          >
+                            <span :class="item.icon" />
+                          </span>
+                          <span
+                            class="text-sm font-bold leading-tight"
+                            :class="item.highlight ? 'text-amber-200' : 'text-slate-200'"
+                          >
+                            {{ item.label }}
+                          </span>
+                          <!-- Highlight badge -->
+                          <span
+                            v-if="item.highlight"
+                            class="ml-auto shrink-0 rounded-full bg-gradient-to-r from-amber-500/20 to-rose-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-300"
+                          >
+                            CORE
+                          </span>
+                        </div>
+                        <p class="text-xs leading-relaxed text-slate-500">
+                          {{ item.badge }}
+                        </p>
                       </div>
-                      <p class="text-xs leading-relaxed text-slate-500">
-                        {{ item.badge }}
-                      </p>
                     </div>
-                  </div>
+                  </Reveal>
                 </div>
               </div>
             </Reveal>
@@ -228,7 +241,7 @@ const layers: Layer[] = [
         <Reveal :delay="0.5" direction="up" width="100%">
           <div class="mt-12 text-center">
             <div class="inline-flex items-center gap-3 rounded-2xl border border-slate-700/30 bg-slate-800/50 px-6 py-4 backdrop-blur-sm">
-              <span class="i-carbon-data--structured text-slate-500 text-lg" />
+              <span class="i-carbon-data--structured text-slate-500 text-lg animate-spin-slow" />
               <span class="text-sm text-slate-400">
                 <strong class="text-slate-300">四层架构</strong>  ·  从入口到引擎，层层赋能  ·  <strong class="text-slate-300">Dimens</strong> 驱动企业智能升级
               </span>
@@ -239,3 +252,14 @@ const layers: Layer[] = [
     </div>
   </section>
 </template>
+
+<style scoped>
+/* 层卡片背景光晕：默认隐藏，hover 时呼吸（复用全局 breathe 关键帧） */
+.layer-glow {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.group:hover .layer-glow {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+</style>

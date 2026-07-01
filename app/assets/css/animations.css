@@ -1,0 +1,276 @@
+/**
+ * 全局动画关键帧库
+ * 设计原则：CSS-first，零依赖，配合 UnoCSS shortcuts 与 Reveal.vue 使用
+ */
+
+/* ============ 关键帧定义 ============ */
+
+/* 渐变光晕脉动 */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+
+/* 漂浮（轻微上下） */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* 缓慢漂浮（更柔和） */
+@keyframes float-soft {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+
+/* 渐变背景流动 */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 文字渐变流动 */
+@keyframes text-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* 边框光带扫描 */
+@keyframes border-scan {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* 闪光扫过（卡片高光） */
+@keyframes shine {
+  0% { transform: translateX(-120%) skewX(-20deg); }
+  60%, 100% { transform: translateX(220%) skewX(-20deg); }
+}
+
+/* 旋转（缓慢） */
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+/* 反向旋转 */
+@keyframes spin-reverse {
+  to { transform: rotate(-360deg); }
+}
+
+/* 弹跳入场 */
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.85); }
+  60% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* 数字滚动占位（用于 stats） */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 跑马灯（横向无限滚动） */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* 脉冲环（雷达扫描感） */
+@keyframes ping-ring {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* 涟漪点击效果 */
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* 微弱呼吸（用于指示点） */
+@keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.92); }
+}
+
+/* 3D 倾斜浮动 */
+@keyframes tilt-3d {
+  0%, 100% { transform: perspective(800px) rotateX(0) rotateY(0); }
+  50% { transform: perspective(800px) rotateX(4deg) rotateY(-6deg); }
+}
+
+/* 进度条填充 */
+@keyframes bar-fill {
+  from { width: 0; }
+}
+
+/* 波浪流动（底部装饰） */
+@keyframes wave {
+  0% { transform: translateX(0) translateZ(0); }
+  100% { transform: translateX(-50%) translateZ(0); }
+}
+
+/* ============ 工具类 ============ */
+
+/* 渐变流动背景工具 */
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* 文字渐变流动 */
+.animate-text-shimmer {
+  background-size: 200% auto;
+  animation: text-shimmer 4s linear infinite;
+}
+
+/* 漂浮 */
+.animate-float {
+  animation: float-y 4s ease-in-out infinite;
+}
+
+.animate-float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+/* 慢转 */
+.animate-spin-slow {
+  animation: spin-slow 14s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 18s linear infinite;
+}
+
+/* 弹跳入场（用于 badge/标签） */
+.animate-pop {
+  animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* 呼吸 */
+.animate-breathe {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+/* 闪光扫过容器（hover 触发） */
+.shine-on-hover {
+  position: relative;
+  overflow: hidden;
+}
+.shine-on-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+}
+.shine-on-hover:hover::after {
+  animation: shine 0.9s ease-out;
+}
+
+/* 跑马灯容器 */
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee-x 30s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* 雷达脉冲环 */
+.ping-ring {
+  position: relative;
+}
+.ping-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: ping-ring 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* ============ 滚动驱动的进度条（基于 IntersectionObserver，配合 .animate-on-view） ============ */
+
+/* 进度条入场（被观察时由 Reveal 或 .is-visible 触发） */
+.bar-fill-animate {
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.is-visible .bar-fill-animate,
+.bar-fill-animate.is-visible {
+  /* width 由内联 style 控制目标值 */
+}
+
+/* ============ Reduced Motion 适配 ============ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============ Nuxt 页面过渡（配合 nuxt.config.ts app.pageTransition） ============ */
+
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.layout-enter-active,
+.layout-leave-active {
+  transition: opacity 0.3s ease;
+}
+.layout-enter-from,
+.layout-leave-to {
+  opacity: 0;
+}
+
+/* ============ 滚动条美化（细节加分） ============ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 140, 0.3);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 140, 0.55);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+/* 文字选中色 */
+::selection {
+  background: rgba(59, 130, 246, 0.25);
+}

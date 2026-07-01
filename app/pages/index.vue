@@ -3,20 +3,26 @@ definePageMeta({
   layout: 'home',
 })
 
+const { locale, messages } = useLocale()
+
 useSeo({
-  title: '首页',
-  description: '维表智联（Dimens）— AI 原生的企业级智能协作平台。融合多维表格、富文本文档、AI 工作流、审批流、知识库与数字员工，为企业提供一站式数据管理、文档协作与 AI 自动化服务。',
-  keywords: ['方块智联', '维表智联', 'Dimens', 'AI工作流', '多维表格', '企业协作', '数字员工'],
-  ogImage: '/static/AI维表.jpeg',
+  title: messages.value.home.seoTitle,
+  description: messages.value.common.siteDescription,
+  keywords: messages.value.common.keywords,
+  ogImage: messages.value.common.defaultOgImage,
+  locale: locale.value,
+  siteName: messages.value.common.siteName,
 })
 </script>
 
 <template>
-  <HeroSection />
-  <DimensOverview />
-  <ProductMatrix />
-  <CaseStudies />
-  <DimensDigitalStaff />
-  <BlogSection />
-  <CtaSection />
+  <div>
+    <HeroSection />
+    <DimensOverview />
+    <ProductMatrix />
+    <CaseStudies />
+    <DimensDigitalStaff />
+    <BlogSection />
+    <CtaSection />
+  </div>
 </template>

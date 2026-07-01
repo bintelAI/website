@@ -1,49 +1,59 @@
 <script setup lang="ts">
-import { caseStudies } from '~/constants'
+const localePath = useLocalePath()
+const { messages } = useLocale()
+const caseStudies = computed(() => messages.value.data.cases)
 </script>
 
 <template>
-  <section class="py-24 bg-slate-900 text-white relative overflow-hidden">
-    <div class="container mx-auto px-6 relative z-10">
+  <section class="text-white py-24 bg-slate-900 relative overflow-hidden">
+    <div class="mx-auto px-6 container relative z-10">
       <Reveal>
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+        <div class="mb-16 flex flex-col gap-6 items-start justify-between md:flex-row md:items-end">
           <div>
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">客户成功案例</h2>
-            <p class="text-slate-400 max-w-2xl">见证 500+ 行业领军企业如何通过方块智联实现业务飞跃</p>
+            <h2 class="animate-text-shimmer text-3xl text-transparent font-bold mb-4 from-white to-white via-blue-400 bg-gradient-to-r bg-clip-text md:text-4xl">
+              {{ messages.casesPage.title }}
+            </h2>
+            <p class="text-slate-400 max-w-2xl">
+              {{ messages.casesPage.description }}
+            </p>
           </div>
           <NuxtLink
-            to="/cases"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-500/50 shadow-xl shadow-blue-900/30 transition-all duration-300 hover:-translate-y-1 text-white text-sm"
+            :to="localePath('/cases')"
+            class="shine-on-hover text-sm text-white font-medium px-6 py-3 border border-blue-500/50 rounded-lg inline-flex gap-2 shadow-blue-900/30 shadow-xl transition-all duration-300 items-center relative overflow-hidden from-blue-600 to-indigo-600 bg-gradient-to-r hover:-translate-y-1"
           >
-            查看所有案例
+            {{ messages.casesPage.viewAll }}
             <span class="i-carbon-arrow-right text-sm" />
           </NuxtLink>
         </div>
       </Reveal>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="gap-6 grid lg:grid-cols-4 md:grid-cols-2">
         <div
           v-for="(item, index) in caseStudies"
           :key="item.title"
         >
-          <Reveal :delay="index * 0.1">
-            <div class="group cursor-pointer relative overflow-hidden bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-900/20 h-full">
+          <Reveal :delay="index * 0.1" variant="scale">
+            <div class="group shine-on-hover p-6 border border-slate-700/50 rounded-2xl h-full cursor-pointer transition-all duration-500 relative overflow-hidden from-slate-800/80 to-slate-900/80 bg-gradient-to-br backdrop-blur-sm hover:bg-slate-800 hover:shadow-2xl hover:shadow-blue-900/20 hover:-translate-y-2">
               <!-- Background effects -->
-              <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div class="opacity-0 transition-opacity duration-500 inset-0 absolute from-blue-600/10 to-purple-600/10 bg-gradient-to-br group-hover:opacity-100" />
+              <div class="case-glow rounded-full bg-blue-500/20 h-40 w-40 absolute blur-3xl -right-20 -top-20" />
 
               <div class="relative z-10">
-                <div class="flex items-center justify-between mb-6">
-                  <div class="w-12 h-12 bg-slate-700/80 rounded-xl flex items-center justify-center group-hover:bg-blue-600/30 group-hover:text-blue-400 transition-all duration-300">
-                    <span :class="[item.icon, 'text-2xl']" />
+                <div class="mb-6 flex items-center justify-between">
+                  <div class="rounded-xl bg-slate-700/80 flex h-12 w-12 transition-all duration-500 items-center justify-center group-hover:text-blue-400 group-hover:bg-blue-600/30 group-hover:rotate-6">
+                    <span class="text-2xl" :class="[item.icon]" />
                   </div>
-                  <div class="text-green-400 font-bold text-sm bg-green-400/15 px-3 py-1.5 rounded-full border border-green-400/30">
+                  <div class="text-sm text-green-400 font-bold px-3 py-1.5 border border-green-400/30 rounded-full bg-green-400/15 transition-transform duration-300 group-hover:scale-110">
                     {{ item.metric }}
                   </div>
                 </div>
-                <h4 class="text-lg font-bold mb-2 group-hover:text-blue-300 transition-colors">{{ item.title }}</h4>
-                <div class="text-xs text-slate-500 mb-3 uppercase tracking-wider font-bold">{{ item.company }}</div>
-                <p class="text-slate-400 text-sm leading-relaxed">
+                <h4 class="text-lg font-bold mb-2 transition-colors group-hover:text-blue-300">
+                  {{ item.title }}
+                </h4>
+                <div class="text-xs text-slate-500 tracking-wider font-bold mb-3 uppercase">
+                  {{ item.company }}
+                </div>
+                <p class="text-sm text-slate-400 leading-relaxed">
                   {{ item.description }}
                 </p>
               </div>
@@ -54,3 +64,14 @@ import { caseStudies } from '~/constants'
     </div>
   </section>
 </template>
+
+<style scoped>
+/* 案例卡片背景光晕：默认隐藏，hover 时呼吸（复用全局 breathe 关键帧） */
+.case-glow {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.group:hover .case-glow {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+</style>

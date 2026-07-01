@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { productDetails } from '~/constants'
-
 const route = useRoute()
+const localePath = useLocalePath()
+const { messages, oppositeLocale, oppositeLocaleName, switchLocale } = useLocale()
 const isScrolled = ref(false)
 const isMenuOpen = ref(false)
 const isProductDropdownOpen = ref(false)
 
 // 首页未滚动时使用深色主题（与深色 Hero 融合）
-const isDarkTheme = computed(() => route.path === '/' && !isScrolled.value && !isMenuOpen.value)
+const isHome = computed(() => route.path === '/' || route.path === '/en')
+const isDarkTheme = computed(() => isHome.value && !isScrolled.value && !isMenuOpen.value)
 // 是否需要实色背景：首页未滚动时透明，其余情况实色
-const isSolidBg = computed(() => isScrolled.value || route.path !== '/' || isMenuOpen.value)
+const isSolidBg = computed(() => isScrolled.value || !isHome.value || isMenuOpen.value)
 
 function headerBgClass(): string {
-  if (!isSolidBg.value) return 'bg-transparent'
+  if (!isSolidBg.value)
+    return 'bg-transparent'
   return 'bg-white/95 backdrop-blur-md shadow-sm'
 }
 
@@ -37,19 +39,22 @@ watch(() => route.path, () => {
 })
 
 function isActive(path: string) {
-  if (path === '/') return route.path === '/'
-  return route.path.startsWith(path)
+  const localizedPath = localePath(path)
+  if (path === '/')
+    return route.path === localizedPath
+  return route.path.startsWith(localizedPath)
 }
 
-const coreProducts = computed(() => productDetails.filter(p => ['dimens', 'appthen'].includes(p.id)))
-const enterpriseProducts = computed(() => productDetails.filter(p => !p.isIndustry && !['dimens', 'appthen'].includes(p.id)))
-const industryProducts = computed(() => productDetails.filter(p => p.isIndustry))
+const products = computed(() => messages.value.data.products)
+const coreProducts = computed(() => products.value.filter(p => ['dimens', 'appthen'].includes(p.id)))
+const enterpriseProducts = computed(() => products.value.filter(p => !p.isIndustry && !['dimens', 'appthen'].includes(p.id)))
+const industryProducts = computed(() => products.value.filter(p => p.isIndustry))
 
-const navItems = [
-  { label: '解决方案', path: '/solutions' },
-  { label: '新闻动态', path: '/blog' },
-  { label: '关于我们', path: '/about' },
-]
+const navItems = computed(() => [
+  { label: messages.value.nav.solutions, path: '/solutions' },
+  { label: messages.value.nav.blog, path: '/blog' },
+  { label: messages.value.nav.about, path: '/about' },
+])
 
 function navTextClass(active: boolean): string {
   if (isDarkTheme.value) {
@@ -61,30 +66,32 @@ function navTextClass(active: boolean): string {
 
 <template>
   <header
-    class="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+    class="w-full transition-all duration-300 left-0 top-0 fixed z-50"
     :class="headerBgClass()"
   >
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+    <div class="mx-auto px-4 max-w-7xl lg:px-8 sm:px-6">
+      <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-2 cursor-pointer z-50">
-          <div class="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+        <NuxtLink :to="localePath('/')" class="group flex gap-2 cursor-pointer items-center z-50">
+          <div class="text-white rounded-lg flex h-8 w-8 shadow-lg transition-transform duration-500 items-center justify-center from-blue-600 to-purple-600 bg-gradient-to-br group-hover:rotate-12">
             <span class="i-carbon-cube text-lg" />
           </div>
           <span
-            class="font-bold text-xl tracking-tight transition-colors"
+            class="text-xl tracking-tight font-bold transition-colors"
             :class="headerTextClass()"
-          >方块智联</span>
+          >{{ messages.common.brandShort }}</span>
         </NuxtLink>
 
         <!-- Desktop Nav -->
-        <nav class="hidden lg:flex items-center gap-1">
+        <nav class="gap-1 hidden items-center lg:flex">
           <!-- 首页 -->
           <NuxtLink
-            to="/"
-            class="px-4 py-2 rounded-lg font-medium text-sm transition-colors"
-            :class="navTextClass(route.path === '/')"
-          >首页</NuxtLink>
+            :to="localePath('/')"
+            class="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            :class="navTextClass(isActive('/'))"
+          >
+            {{ messages.nav.home }}
+          </NuxtLink>
 
           <!-- 产品中心 Mega Menu -->
           <div
@@ -93,11 +100,11 @@ function navTextClass(active: boolean): string {
             @mouseleave="isProductDropdownOpen = false"
           >
             <NuxtLink
-              to="/products"
-              class="flex items-center gap-1 px-4 py-2 rounded-lg font-medium text-sm transition-colors no-underline"
+              :to="localePath('/products')"
+              class="text-sm font-medium px-4 py-2 rounded-lg no-underline flex gap-1 transition-colors items-center"
               :class="navTextClass(isActive('/products') || isActive('/product'))"
             >
-              产品中心
+              {{ messages.nav.products }}
               <span
                 class="i-carbon-chevron-down text-xs transition-transform duration-300"
                 :class="{ 'rotate-180': isProductDropdownOpen }"
@@ -106,57 +113,63 @@ function navTextClass(active: boolean): string {
 
             <!-- Mega Menu Dropdown -->
             <div
-              class="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-[820px] transition-all duration-300 transform origin-top"
+              class="pt-4 w-[820px] origin-top transform transition-all duration-300 left-1/2 top-full absolute -translate-x-1/2"
               :class="isProductDropdownOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible pointer-events-none'"
             >
-              <div class="bg-white rounded-2xl shadow-2xl border border-gray-100/80 overflow-hidden">
+              <div class="shine-on-hover border border-gray-100/80 rounded-2xl bg-white shadow-2xl overflow-hidden">
                 <div class="flex">
                   <!-- 左栏: 核心平台 -->
-                  <div class="w-[280px] bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-6 shrink-0">
-                    <div class="flex items-center gap-2 mb-5">
-                      <div class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                      <span class="text-[11px] font-semibold text-blue-300 uppercase tracking-widest">核心平台</span>
+                  <div class="p-6 shrink-0 w-[280px] from-slate-900 to-indigo-900 via-blue-900 bg-gradient-to-br">
+                    <div class="mb-5 flex gap-2 items-center">
+                      <div class="animate-breathe rounded-full bg-cyan-400 h-1.5 w-1.5" />
+                      <span class="text-[11px] text-blue-300 tracking-widest font-semibold uppercase">{{ messages.nav.corePlatform }}</span>
                     </div>
                     <div class="space-y-3">
                       <NuxtLink
                         v-for="p in coreProducts"
                         :key="p.id"
-                        :to="`/product/${p.id}`"
-                        class="block p-4 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.06] hover:border-white/[0.12] transition-all group no-underline"
+                        :to="localePath(`/product/${p.id}`)"
+                        class="group p-4 border border-white/[0.06] rounded-xl bg-white/[0.06] no-underline block transition-all hover:border-white/[0.12] hover:bg-white/[0.12]"
                         @click="isProductDropdownOpen = false"
                       >
-                        <div class="flex items-center gap-3 mb-2">
-                          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-                            <span :class="[p.icon, 'text-white text-sm']" />
+                        <div class="mb-2 flex gap-3 items-center">
+                          <div class="rounded-lg flex h-8 w-8 shadow-cyan-500/20 shadow-lg items-center justify-center from-blue-400 to-cyan-400 bg-gradient-to-br">
+                            <span class="text-sm text-white" :class="[p.icon]" />
                           </div>
-                          <div class="font-bold text-white text-sm group-hover:text-cyan-300 transition-colors">{{ p.shortName || p.title }}</div>
+                          <div class="text-sm text-white font-bold transition-colors group-hover:text-cyan-300">
+                            {{ p.shortName || p.title }}
+                          </div>
                         </div>
-                        <div class="text-xs text-blue-200/60 leading-relaxed line-clamp-2 pl-11">{{ p.description }}</div>
+                        <div class="text-xs text-blue-200/60 leading-relaxed pl-11 line-clamp-2">
+                          {{ p.description }}
+                        </div>
                       </NuxtLink>
                     </div>
                   </div>
 
                   <!-- 右栏: 企业产品 + 行业产品 -->
-                  <div class="flex-1 p-6">
+                  <div class="p-6 flex-1">
                     <!-- 企业产品 -->
                     <div class="mb-5">
-                      <div class="flex items-center gap-2 mb-3">
-                        <div class="w-1 h-4 bg-blue-500 rounded-full" />
-                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">企业产品</span>
+                      <div class="mb-3 flex gap-2 items-center">
+                        <div class="rounded-full bg-blue-500 h-4 w-1" />
+                        <span class="text-[11px] text-gray-400 tracking-widest font-bold uppercase">{{ messages.nav.enterpriseProducts }}</span>
                       </div>
-                      <div class="grid grid-cols-2 gap-0.5">
+                      <div class="gap-0.5 grid grid-cols-2">
                         <NuxtLink
                           v-for="p in enterpriseProducts"
                           :key="p.id"
-                          :to="`/product/${p.id}`"
-                          class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50/60 transition-colors group no-underline"
+                          :to="localePath(`/product/${p.id}`)"
+                          class="group p-2.5 rounded-xl no-underline flex gap-3 transition-colors items-center hover:bg-blue-50/60"
                           @click="isProductDropdownOpen = false"
                         >
-                          <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
-                            <span :class="[p.icon, 'text-sm text-blue-500 group-hover:text-blue-600 transition-colors']" />
+                          <div class="rounded-lg bg-blue-50 flex shrink-0 h-7 w-7 transition-all duration-300 items-center justify-center group-hover:bg-blue-100 group-hover:scale-110">
+                            <span class="text-sm text-blue-500 transition-colors group-hover:text-blue-600" :class="[p.icon]" />
                           </div>
                           <div class="min-w-0">
-                            <div class="font-medium text-gray-700 text-[13px] group-hover:text-blue-600 transition-colors truncate">{{ p.shortName || p.title }}</div>
+                            <div class="text-[13px] text-gray-700 font-medium truncate transition-colors group-hover:text-blue-600">
+                              {{ p.shortName || p.title }}
+                            </div>
                           </div>
                         </NuxtLink>
                       </div>
@@ -164,23 +177,25 @@ function navTextClass(active: boolean): string {
 
                     <!-- 行业产品 -->
                     <div>
-                      <div class="flex items-center gap-2 mb-3">
-                        <div class="w-1 h-4 bg-amber-500 rounded-full" />
-                        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">开源产品</span>
+                      <div class="mb-3 flex gap-2 items-center">
+                        <div class="rounded-full bg-amber-500 h-4 w-1" />
+                        <span class="text-[11px] text-gray-400 tracking-widest font-bold uppercase">{{ messages.nav.openSourceProducts }}</span>
                       </div>
-                      <div class="grid grid-cols-2 gap-0.5">
+                      <div class="gap-0.5 grid grid-cols-2">
                         <NuxtLink
                           v-for="p in industryProducts"
                           :key="p.id"
-                          :to="`/product/${p.id}`"
-                          class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-amber-50/60 transition-colors group no-underline"
+                          :to="localePath(`/product/${p.id}`)"
+                          class="group p-2.5 rounded-xl no-underline flex gap-3 transition-colors items-center hover:bg-amber-50/60"
                           @click="isProductDropdownOpen = false"
                         >
-                          <div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors">
-                            <span :class="[p.icon, 'text-sm text-amber-500 group-hover:text-amber-600 transition-colors']" />
+                          <div class="rounded-lg bg-amber-50 flex shrink-0 h-7 w-7 transition-all duration-300 items-center justify-center group-hover:bg-amber-100 group-hover:scale-110">
+                            <span class="text-sm text-amber-500 transition-colors group-hover:text-amber-600" :class="[p.icon]" />
                           </div>
                           <div class="min-w-0">
-                            <div class="font-medium text-gray-700 text-[13px] group-hover:text-amber-600 transition-colors truncate">{{ p.shortName || p.title }}</div>
+                            <div class="text-[13px] text-gray-700 font-medium truncate transition-colors group-hover:text-amber-600">
+                              {{ p.shortName || p.title }}
+                            </div>
                           </div>
                         </NuxtLink>
                       </div>
@@ -189,14 +204,14 @@ function navTextClass(active: boolean): string {
                 </div>
 
                 <!-- 底部: 查看全部 -->
-                <div class="border-t border-gray-100 px-6 py-3 bg-gray-50/50">
+                <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
                   <NuxtLink
-                    to="/products"
-                    class="flex items-center justify-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors no-underline"
+                    :to="localePath('/products')"
+                    class="group text-sm text-blue-600 font-medium no-underline flex gap-1 transition-colors items-center justify-center hover:text-blue-700"
                     @click="isProductDropdownOpen = false"
                   >
-                    查看全部产品
-                    <span class="i-carbon-arrow-right text-xs" />
+                    {{ messages.nav.viewAllProducts }}
+                    <span class="i-carbon-arrow-right text-xs transition-transform group-hover:translate-x-1" />
                   </NuxtLink>
                 </div>
               </div>
@@ -207,8 +222,8 @@ function navTextClass(active: boolean): string {
           <NuxtLink
             v-for="item in navItems"
             :key="item.path"
-            :to="item.path"
-            class="px-4 py-2 rounded-lg font-medium text-sm transition-colors"
+            :to="localePath(item.path)"
+            class="text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             :class="navTextClass(isActive(item.path))"
           >
             {{ item.label }}
@@ -216,23 +231,33 @@ function navTextClass(active: boolean): string {
         </nav>
 
         <!-- 联系我们按钮 -->
-        <div class="hidden lg:flex items-center">
+        <div class="gap-2 hidden items-center lg:flex">
+          <button
+            type="button"
+            class="text-sm font-medium px-3 py-2 rounded-full flex gap-1.5 transition-all items-center"
+            :class="headerBtnClass()"
+            :aria-label="messages.nav.languageLabel"
+            @click="switchLocale(oppositeLocale)"
+          >
+            <span class="i-carbon-language text-base" />
+            {{ oppositeLocaleName }}
+          </button>
           <a
             href="https://dimens.bintelai.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="flex items-center gap-2 px-5 py-2 rounded-full font-medium text-sm transition-all shadow-sm"
+            class="shine-on-hover text-sm font-medium px-5 py-2 rounded-full flex gap-2 shadow-sm transition-all items-center"
             :class="isDarkTheme
               ? 'bg-white text-blue-900 hover:bg-blue-50'
               : 'bg-slate-900 text-white hover:bg-slate-800'"
           >
-            登入维表
+            {{ messages.nav.loginDimens }}
           </a>
         </div>
 
         <!-- Mobile Menu Toggle -->
         <button
-          class="lg:hidden p-2.5 rounded-full transition-all cursor-pointer text-white bg-black/30 backdrop-blur-sm hover:bg-black/50"
+          class="text-white p-2.5 rounded-full bg-black/30 cursor-pointer transition-all backdrop-blur-sm hover:bg-black/50 lg:hidden"
           @click="isMenuOpen = !isMenuOpen"
         >
           <span v-if="isMenuOpen" class="i-carbon-close text-lg" />
@@ -244,62 +269,78 @@ function navTextClass(active: boolean): string {
     <!-- Mobile Overlay -->
     <div
       v-if="isMenuOpen"
-      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+      class="bg-black/40 inset-0 fixed z-40 backdrop-blur-sm lg:hidden"
       @click="isMenuOpen = false"
     />
 
     <!-- Mobile Nav Dropdown -->
     <div
       v-if="isMenuOpen"
-      class="bg-white shadow-lg border-t border-gray-100 lg:hidden flex flex-col p-6 gap-2 max-h-[80vh] overflow-y-auto relative z-50"
+      class="p-6 border-t border-gray-100 bg-white flex flex-col gap-2 max-h-[80vh] shadow-lg relative z-50 overflow-y-auto lg:hidden"
     >
       <NuxtLink
-        to="/"
+        :to="localePath('/')"
         class="font-medium p-3 rounded-lg hover:bg-gray-50"
-        :class="route.path === '/' ? 'text-blue-600 bg-blue-50' : 'text-gray-900'"
+        :class="isActive('/') ? 'text-blue-600 bg-blue-50' : 'text-gray-900'"
         @click="isMenuOpen = false"
-      >首页</NuxtLink>
+      >
+        {{ messages.nav.home }}
+      </NuxtLink>
 
       <!-- 产品中心 (mobile) -->
       <div class="p-3">
-        <div class="font-medium mb-3 text-gray-900 text-sm">产品中心</div>
+        <div class="text-sm text-gray-900 font-medium mb-3">
+          {{ messages.nav.products }}
+        </div>
 
-        <div class="pl-2 mb-4">
-          <div class="text-xs text-gray-400 mb-2 uppercase tracking-wider">核心平台</div>
+        <div class="mb-4 pl-2">
+          <div class="text-xs text-gray-400 tracking-wider mb-2 uppercase">
+            {{ messages.nav.corePlatform }}
+          </div>
           <div class="space-y-1">
             <NuxtLink
               v-for="p in coreProducts"
               :key="p.id"
-              :to="`/product/${p.id}`"
-              class="block w-full text-left py-2 px-3 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 font-medium"
+              :to="localePath(`/product/${p.id}`)"
+              class="text-sm text-gray-600 font-medium px-3 py-2 text-left rounded-lg w-full block hover:text-blue-600 hover:bg-blue-50"
               @click="isMenuOpen = false"
-            >{{ p.title }}</NuxtLink>
+            >
+              {{ p.title }}
+            </NuxtLink>
           </div>
         </div>
 
-        <div class="pl-2 mb-4">
-          <div class="text-xs text-gray-400 mb-2 uppercase tracking-wider">企业产品</div>
+        <div class="mb-4 pl-2">
+          <div class="text-xs text-gray-400 tracking-wider mb-2 uppercase">
+            {{ messages.nav.enterpriseProducts }}
+          </div>
           <div class="space-y-1">
             <NuxtLink
               v-for="p in enterpriseProducts"
               :key="p.id"
-              :to="`/product/${p.id}`"
-              class="block w-full text-left py-2 px-3 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 font-medium"
+              :to="localePath(`/product/${p.id}`)"
+              class="text-sm text-gray-600 font-medium px-3 py-2 text-left rounded-lg w-full block hover:text-blue-600 hover:bg-blue-50"
               @click="isMenuOpen = false"
-            >{{ p.title }}</NuxtLink>
+            >
+              {{ p.title }}
+            </NuxtLink>
           </div>
         </div>
 
         <div class="pl-2">
-          <div class="text-xs text-gray-400 mb-2 uppercase tracking-wider">开源产品</div>
+          <div class="text-xs text-gray-400 tracking-wider mb-2 uppercase">
+            {{ messages.nav.openSourceProducts }}
+          </div>
           <div class="space-y-1">
             <NuxtLink
               v-for="p in industryProducts"
               :key="p.id"
-              :to="`/product/${p.id}`"
-              class="block w-full text-left py-2 px-3 rounded-lg text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-600 font-medium"
+              :to="localePath(`/product/${p.id}`)"
+              class="text-sm text-gray-600 font-medium px-3 py-2 text-left rounded-lg w-full block hover:text-blue-600 hover:bg-blue-50"
               @click="isMenuOpen = false"
-            >{{ p.title }}</NuxtLink>
+            >
+              {{ p.title }}
+            </NuxtLink>
           </div>
         </div>
       </div>
@@ -307,19 +348,32 @@ function navTextClass(active: boolean): string {
       <NuxtLink
         v-for="item in navItems"
         :key="item.path"
-        :to="item.path"
+        :to="localePath(item.path)"
         class="font-medium p-3 rounded-lg hover:bg-gray-50"
         :class="isActive(item.path) ? 'text-blue-600 bg-blue-50' : 'text-gray-900'"
         @click="isMenuOpen = false"
-      >{{ item.label }}</NuxtLink>
+      >
+        {{ item.label }}
+      </NuxtLink>
 
-      <hr class="border-gray-100 my-2">
+      <hr class="my-2 border-gray-100">
+
+      <button
+        type="button"
+        class="text-gray-700 font-medium p-3 text-center border border-gray-200 rounded-xl flex gap-2 transition-colors items-center justify-center hover:bg-gray-50"
+        @click="switchLocale(oppositeLocale)"
+      >
+        <span class="i-carbon-language" />
+        {{ oppositeLocaleName }}
+      </button>
 
       <NuxtLink
-        to="/contact"
-        class="bg-slate-900 text-white text-center font-medium p-3 rounded-xl hover:bg-slate-800 transition-colors"
+        :to="localePath('/contact')"
+        class="text-white font-medium p-3 text-center rounded-xl bg-slate-900 transition-colors hover:bg-slate-800"
         @click="isMenuOpen = false"
-      >联系我们</NuxtLink>
+      >
+        {{ messages.nav.contact }}
+      </NuxtLink>
     </div>
   </header>
 </template>

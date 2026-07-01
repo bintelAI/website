@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { appName } from '~/constants'
+import { buildLocalePath } from '~/i18n/utils'
+
+const route = useRoute()
+const { locale, messages } = useLocale()
+const siteUrl = 'https://dimens.cn'
 
 useHead({
-  title: appName,
+  title: computed(() => messages.value.common.siteTitle),
+  htmlAttrs: {
+    lang: computed(() => locale.value === 'en-US' ? 'en' : 'zh-CN'),
+  },
+  link: [
+    { rel: 'canonical', href: computed(() => `${siteUrl}${buildLocalePath(route.fullPath, locale.value)}`) },
+    { rel: 'alternate', hreflang: 'zh-CN', href: computed(() => `${siteUrl}${buildLocalePath(route.fullPath, 'zh-CN')}`) },
+    { rel: 'alternate', hreflang: 'en', href: computed(() => `${siteUrl}${buildLocalePath(route.fullPath, 'en-US')}`) },
+    { rel: 'alternate', hreflang: 'x-default', href: computed(() => `${siteUrl}${buildLocalePath(route.fullPath, 'zh-CN')}`) },
+  ],
 })
 </script>
 

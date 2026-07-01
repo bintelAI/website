@@ -3,7 +3,7 @@
 
 <template>
   <section class="bg-slate-50 dark:bg-slate-900/50 py-16 relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+    <div class="absolute top-0 left-0 w-full h-full bg-[url('/noise.svg')] opacity-20 pointer-events-none" />
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <!-- Section header -->

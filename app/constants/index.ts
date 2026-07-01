@@ -1,6 +1,6 @@
 // 网站基础信息
 export const appName = '方块智联'
-export const appDescription = '维表智联（Dimens）— AI 原生的企业级智能协作平台。融合多维表格、富文本文档、AI 工作流、审批流、知识库与数字员工，为企业提供一站式数据管理、文档协作与 AI 自动化服务。'
+export const appDescription = '维表智联 | 方块智联 — AI驱动数智化，行业未来的核心动力。作为专业AI团队，我们认为所有产品都应拥抱AI重构。通过将前沿AI技术与各行业深度融合，为企业提供智能化升级路径。融合多维表格、富文本文档、AI工作流、审批流、知识库与数字员工，打造AI原生的企业级智能协作平台。'
 
 // 导航菜单
 export interface NavItem {

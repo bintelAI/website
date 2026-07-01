@@ -1,88 +1,107 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'default' })
 
+const { locale, messages } = useLocale()
+
 useSeo({
-  title: '联系我们',
-  description: '与方块智联取得联系，获取企业级智能协作平台的咨询与试用服务。',
-  keywords: ['方块智联', '联系我们', '商务咨询', '产品试用', '企业合作'],
+  title: messages.value.contactPage.seoTitle,
+  description: messages.value.contactPage.seoDescription,
+  keywords: [messages.value.common.siteName, messages.value.contactPage.seoTitle],
+  locale: locale.value,
+  siteName: messages.value.common.siteName,
 })
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="bg-gray-50 min-h-screen">
     <!-- 标题区 -->
-    <div class="bg-slate-900 text-white pt-32 pb-16">
-      <div class="max-w-7xl mx-auto px-6 text-center">
-        <h1 class="text-4xl md:text-5xl font-bold mb-6">
-          联系我们
+    <div class="text-white pb-16 pt-32 bg-slate-900 relative overflow-hidden">
+      <div class="animate-breathe rounded-full bg-blue-500/10 h-[480px] w-[480px] pointer-events-none left-1/2 top-1/2 absolute blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div class="mx-auto px-6 text-center max-w-7xl relative z-10">
+        <h1 class="animate-text-shimmer text-4xl text-transparent font-bold mb-6 from-white to-white via-blue-400 bg-gradient-to-r bg-clip-text md:text-5xl">
+          {{ messages.contactPage.title }}
         </h1>
-        <p class="text-xl text-slate-400 max-w-2xl mx-auto">
-          我们期待听到您的声音
+        <p class="text-xl text-slate-400 mx-auto max-w-2xl">
+          {{ messages.contactPage.subtitle }}
         </p>
       </div>
     </div>
 
     <!-- 内容区 -->
-    <div class="max-w-7xl mx-auto px-6 py-16">
-      <div class="grid lg:grid-cols-2 gap-12">
+    <div class="mx-auto px-6 py-16 max-w-7xl">
+      <div class="gap-12 grid lg:grid-cols-2">
         <!-- 左列：联系方式 -->
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
-          <h3 class="text-2xl font-bold text-gray-900 mb-8">
-            联系方式
+        <div class="p-8 border border-gray-100 rounded-2xl bg-white h-full shadow-sm">
+          <h3 class="text-2xl text-gray-900 font-bold mb-8">
+            {{ messages.contactPage.contactInfo }}
           </h3>
 
           <div class="space-y-8">
             <!-- 公司地址 -->
-            <div class="flex items-start">
-              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shrink-0 mr-4">
+            <div class="group flex items-start">
+              <div class="text-blue-600 mr-4 rounded-full bg-blue-100 flex shrink-0 h-12 w-12 transition-transform duration-300 items-center justify-center group-hover:rotate-6 group-hover:scale-110">
                 <span class="i-carbon-location text-xl" />
               </div>
               <div>
-                <h4 class="font-bold text-gray-900 mb-1">公司地址</h4>
-                <p class="text-gray-600">江西省南昌市中兴软件园 507 室</p>
+                <h4 class="text-gray-900 font-bold mb-1">
+                  {{ messages.contactPage.addressLabel }}
+                </h4>
+                <p class="text-gray-600">
+                  {{ messages.contactPage.addressValue }}
+                </p>
               </div>
             </div>
 
             <!-- 联系微信 -->
-            <div class="flex items-start">
-              <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 shrink-0 mr-4">
+            <div class="group flex items-start">
+              <div class="text-purple-600 mr-4 rounded-full bg-purple-100 flex shrink-0 h-12 w-12 transition-transform duration-300 items-center justify-center group-hover:rotate-6 group-hover:scale-110">
                 <span class="i-carbon-phone text-xl" />
               </div>
               <div>
-                <h4 class="font-bold text-gray-900 mb-1">联系微信</h4>
-                <p class="text-gray-600">l4537459 (工作日 9:00-18:00)</p>
+                <h4 class="text-gray-900 font-bold mb-1">
+                  {{ messages.contactPage.wechatLabel }}
+                </h4>
+                <p class="text-gray-600">
+                  {{ messages.contactPage.wechatValue }}
+                </p>
                 <img
                   src="/static/wechat1.png"
-                  alt="微信二维码"
-                  class="mt-3 w-32 h-32 rounded-lg border border-gray-200 object-cover"
+                  :alt="messages.contactPage.wechatLabel"
+                  class="hover-lift mt-3 border border-gray-200 rounded-lg h-32 w-32 object-cover"
                   loading="lazy"
                 >
               </div>
             </div>
 
             <!-- 商务邮箱 -->
-            <div class="flex items-start">
-              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 shrink-0 mr-4">
+            <div class="group flex items-start">
+              <div class="text-green-600 mr-4 rounded-full bg-green-100 flex shrink-0 h-12 w-12 transition-transform duration-300 items-center justify-center group-hover:rotate-6 group-hover:scale-110">
                 <span class="i-carbon-mail-all text-xl" />
               </div>
               <div>
-                <h4 class="font-bold text-gray-900 mb-1">商务邮箱</h4>
-                <p class="text-gray-600">lixiang@bintelai.com</p>
+                <h4 class="text-gray-900 font-bold mb-1">
+                  {{ messages.contactPage.emailLabel }}
+                </h4>
+                <p class="text-gray-600">
+                  lixiang@bintelai.com
+                </p>
               </div>
             </div>
           </div>
 
           <!-- 关注我们 -->
           <div class="mt-12 pt-8 border-t border-gray-100">
-            <h4 class="font-bold text-gray-900 mb-4">关注我们</h4>
+            <h4 class="text-gray-900 font-bold mb-4">
+              {{ messages.contactPage.followUs }}
+            </h4>
             <div class="flex gap-4">
-              <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors cursor-pointer text-gray-600" title="微信">
+              <div class="text-gray-600 rounded-full bg-gray-100 flex h-10 w-10 cursor-pointer transition-colors items-center justify-center hover:text-white hover:bg-blue-600" title="微信">
                 <span class="i-carbon-logo-wechat" />
               </div>
-              <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors cursor-pointer text-gray-600" title="领英">
+              <div class="text-gray-600 rounded-full bg-gray-100 flex h-10 w-10 cursor-pointer transition-colors items-center justify-center hover:text-white hover:bg-blue-600" title="领英">
                 <span class="i-carbon-logo-linkedin" />
               </div>
-              <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors cursor-pointer text-gray-600" title="Twitter">
+              <div class="text-gray-600 rounded-full bg-gray-100 flex h-10 w-10 cursor-pointer transition-colors items-center justify-center hover:text-white hover:bg-blue-600" title="Twitter">
                 <span class="i-carbon-logo-twitter" />
               </div>
             </div>
@@ -90,50 +109,50 @@ useSeo({
         </div>
 
         <!-- 右列：在线咨询表单 -->
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <h3 class="text-2xl font-bold text-gray-900 mb-8">
-            在线咨询
+        <div class="shine-on-hover p-8 border border-gray-100 rounded-2xl bg-white shadow-sm">
+          <h3 class="text-2xl text-gray-900 font-bold mb-8">
+            {{ messages.contactPage.consultation }}
           </h3>
           <form class="space-y-6" @submit.prevent>
-            <div class="grid grid-cols-2 gap-6">
+            <div class="gap-6 grid grid-cols-2">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                <label class="text-sm text-gray-700 font-medium mb-2 block">{{ messages.contactPage.name }}</label>
                 <input
                   type="text"
-                  class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                  placeholder="您的称呼"
+                  class="px-4 py-3 outline-none border border-gray-200 rounded-lg w-full transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  :placeholder="messages.contactPage.namePlaceholder"
                 >
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">电话</label>
+                <label class="text-sm text-gray-700 font-medium mb-2 block">{{ messages.contactPage.phone }}</label>
                 <input
                   type="tel"
-                  class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                  placeholder="联系电话"
+                  class="px-4 py-3 outline-none border border-gray-200 rounded-lg w-full transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  :placeholder="messages.contactPage.phonePlaceholder"
                 >
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+              <label class="text-sm text-gray-700 font-medium mb-2 block">{{ messages.contactPage.email }}</label>
               <input
                 type="email"
-                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                placeholder="example@company.com"
+                class="px-4 py-3 outline-none border border-gray-200 rounded-lg w-full transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                :placeholder="messages.contactPage.emailPlaceholder"
               >
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">咨询内容</label>
+              <label class="text-sm text-gray-700 font-medium mb-2 block">{{ messages.contactPage.message }}</label>
               <textarea
                 rows="4"
-                class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none"
-                placeholder="请简单描述您的需求..."
+                class="px-4 py-3 outline-none border border-gray-200 rounded-lg w-full resize-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                :placeholder="messages.contactPage.messagePlaceholder"
               />
             </div>
             <button
               type="submit"
-              class="w-full py-4 text-lg bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30"
+              class="shine-on-hover text-lg text-white font-semibold py-4 rounded-xl bg-blue-600 w-full shadow-blue-500/30 shadow-lg transition-all hover:bg-blue-700 hover:scale-105"
             >
-              提交咨询
+              {{ messages.contactPage.submit }}
             </button>
           </form>
         </div>

@@ -40,3 +40,5 @@ onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
   - unrs-resolver
+catalog:
+  '@bintel/dimens-cli': ^1.0.10

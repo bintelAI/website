@@ -34,7 +34,7 @@ const executionSteps = [
 <template>
   <section class="py-24 bg-slate-900 text-white relative overflow-hidden">
     <!-- Subtle background grain -->
-    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
+    <div class="absolute inset-0 bg-[url('/noise.svg')] opacity-20 pointer-events-none" />
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
 
     <div class="container mx-auto px-6 relative z-10">
@@ -42,10 +42,11 @@ const executionSteps = [
       <Reveal>
         <div class="mb-16">
           <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm font-bold mb-6">
+            <span class="h-1.5 w-1.5 rounded-full bg-blue-400 animate-breathe" />
             <span class="i-carbon-ai-status text-base" />
             数字员工
           </div>
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-white via-blue-400 to-purple-400 bg-clip-text text-transparent animate-text-shimmer">
             专属数字员工，<br class="hidden sm:block" />每个项目独立的 AI 劳动力
           </h2>
           <p class="text-slate-400 max-w-2xl text-lg leading-relaxed">
@@ -66,14 +67,14 @@ const executionSteps = [
             </h3>
             <div class="relative">
               <!-- Vertical timeline line -->
-              <div class="absolute left-5 top-2 bottom-2 w-px bg-gradient-to-b from-blue-500/60 via-purple-500/40 to-slate-700" />
+              <div class="absolute left-5 top-2 bottom-2 w-px bg-gradient-to-b from-blue-500/60 via-purple-500/40 to-slate-700 animate-gradient" />
 
               <div v-for="(layer, index) in layers" :key="layer.level" class="relative">
                 <Reveal width="100%" :delay="index * 0.08" direction="left">
                   <div class="relative flex items-start gap-5 pb-8 group">
                     <!-- Timeline dot -->
                     <div class="relative z-10 flex-shrink-0">
-                      <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-blue-400 group-hover:text-blue-300 transition-all duration-300">
+                      <div class="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-blue-400 group-hover:text-blue-300 group-hover:scale-110 transition-all duration-300">
                         {{ layer.level }}
                       </div>
                     </div>
@@ -126,7 +127,7 @@ const executionSteps = [
               <!-- Trigger Node -->
               <div class="relative">
                 <div class="flex items-center gap-3 mb-2">
-                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-black font-bold text-xs flex-shrink-0">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 flex items-center justify-center text-black font-bold text-xs flex-shrink-0 animate-breathe">
                     <span class="i-carbon-alarm text-sm" />
                   </div>
                   <span class="text-sm font-bold text-amber-300 uppercase tracking-wider">触发</span>
@@ -138,13 +139,13 @@ const executionSteps = [
 
               <!-- Flow Arrow -->
               <div class="flex justify-center -my-1">
-                <div class="w-px h-6 bg-gradient-to-b from-amber-500/60 to-violet-500/60" />
+                <div class="w-px h-6 bg-gradient-to-b from-amber-500/60 to-violet-500/60 animate-gradient" />
               </div>
 
               <!-- Decision Node -->
               <div class="relative">
                 <div class="flex items-center gap-3 mb-2">
-                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0 animate-breathe" style="animation-delay: 0.5s">
                     <span class="i-carbon-decision-tree text-sm" />
                   </div>
                   <span class="text-sm font-bold text-violet-300 uppercase tracking-wider">决策</span>
@@ -168,13 +169,13 @@ const executionSteps = [
 
               <!-- Flow Arrow -->
               <div class="flex justify-center -my-1">
-                <div class="w-px h-6 bg-gradient-to-b from-violet-500/60 to-emerald-500/60" />
+                <div class="w-px h-6 bg-gradient-to-b from-violet-500/60 to-emerald-500/60 animate-gradient" />
               </div>
 
               <!-- Execution Node -->
               <div class="relative">
                 <div class="flex items-center gap-3 mb-2">
-                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white font-bold text-xs flex-shrink-0 animate-breathe" style="animation-delay: 1s">
                     <span class="i-carbon-play text-sm" />
                   </div>
                   <span class="text-sm font-bold text-emerald-300 uppercase tracking-wider">执行</span>
@@ -186,7 +187,7 @@ const executionSteps = [
                       :key="idx"
                       class="flex items-start gap-3 text-sm"
                     >
-                      <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold flex items-center justify-center mt-0.5">{{ idx + 1 }}</span>
+                      <span class="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold flex items-center justify-center mt-0.5 animate-pop" :style="{ animationDelay: idx * 0.08 + 's' }">{{ idx + 1 }}</span>
                       <span class="text-slate-300">{{ step }}</span>
                     </li>
                   </ol>
@@ -206,49 +207,57 @@ const executionSteps = [
           </h3>
           <p class="text-slate-400 text-sm mb-8">人工 vs AI 效能对比</p>
 
-          <div class="overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/30 backdrop-blur-sm">
+          <div class="relative overflow-hidden shine-on-hover rounded-2xl border border-slate-700/50 bg-slate-800/30 backdrop-blur-sm">
             <!-- Table Header -->
             <div class="grid grid-cols-12 gap-4 px-6 py-4 bg-slate-800/80 border-b border-slate-700/50 text-xs font-bold uppercase tracking-wider text-slate-500">
               <div class="col-span-3 md:col-span-2">指标</div>
               <div class="col-span-3 md:col-span-2 text-right">当前（人工）</div>
               <div class="col-span-3 md:col-span-2 text-right text-blue-400">AI 目标</div>
-              <div class="col-span-3 md:col-span-6">提升幅度</div>
+              <div class="col-span-3 md:col-span-6 animate-breathe">提升幅度</div>
             </div>
 
             <!-- Table Rows -->
-            <div
+            <Reveal
               v-for="(row, index) in roidata"
               :key="row.metric"
-              class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-slate-700/30 last:border-b-0 hover:bg-slate-700/20 transition-colors"
+              variant="none"
+              width="100%"
+              :delay="index * 0.08"
+              once
             >
-              <!-- Metric name -->
-              <div class="col-span-3 md:col-span-2 text-sm font-bold text-slate-200">
-                {{ row.metric }}
-              </div>
+              <div
+                class="grid grid-cols-12 gap-4 px-6 py-4 items-center border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors"
+                :class="{ 'border-b-0': index === roidata.length - 1 }"
+              >
+                <!-- Metric name -->
+                <div class="col-span-3 md:col-span-2 text-sm font-bold text-slate-200">
+                  {{ row.metric }}
+                </div>
 
-              <!-- Current value -->
-              <div class="col-span-3 md:col-span-2 text-right text-sm text-slate-400">
-                {{ row.current }}
-              </div>
+                <!-- Current value -->
+                <div class="col-span-3 md:col-span-2 text-right text-sm text-slate-400">
+                  {{ row.current }}
+                </div>
 
-              <!-- Target value -->
-              <div class="col-span-3 md:col-span-2 text-right text-sm font-bold text-blue-300">
-                {{ row.target }}
-              </div>
+                <!-- Target value -->
+                <div class="col-span-3 md:col-span-2 text-right text-sm font-bold text-blue-300">
+                  {{ row.target }}
+                </div>
 
-              <!-- Improvement bar -->
-              <div class="col-span-3 md:col-span-6">
-                <div class="flex items-center gap-3">
-                  <div class="flex-1 h-2.5 bg-slate-700/60 rounded-full overflow-hidden">
-                    <div
-                      class="h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-400 transition-all duration-1000"
-                      :style="{ width: row.improvement + '%' }"
-                    />
+                <!-- Improvement bar -->
+                <div class="col-span-3 md:col-span-6">
+                  <div class="flex items-center gap-3">
+                    <div class="flex-1 h-2.5 bg-slate-700/60 rounded-full overflow-hidden">
+                      <div
+                        class="h-full rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-400 transition-all duration-1000"
+                        :style="{ width: row.improvement + '%' }"
+                      />
+                    </div>
+                    <span class="text-xs font-bold text-emerald-300 flex-shrink-0 w-10 text-right">{{ row.improvement }}%</span>
                   </div>
-                  <span class="text-xs font-bold text-emerald-300 flex-shrink-0 w-10 text-right">{{ row.improvement }}%</span>
                 </div>
               </div>
-            </div>
+            </Reveal>
           </div>
 
           <!-- Footnote -->
