@@ -22,22 +22,47 @@
 - 新增页面必须同时考虑 SEO、中文默认路由、英文 `/en` 镜像路由和移动端样式。
 - 单文件超过 700 行时优先拆分组件或样式文件；Markdown 文档不受此限制。
 
+### 官网必备能力清单
+
+本项目是企业级官网，必须同时满足以下所有能力项。新增功能或重构时，不得破坏已有能力，并尽可能补齐缺口：
+
+| 序号 | 能力项                | 说明 & 验收标准                                                                                                                                                                                                                                                     | 当前状态    |
+| ---- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 1    | **路由机制完善**      | 1. 中英文双路由（默认 `zh-CN` 无前缀，`en-US` 加 `/en`）<br>2. 站内跳转统一走 `useLocalePath()`，禁手写 `/en/xxx`<br>3. 新增页面自动同步英文镜像路由<br>4. 404 通配路由兜底<br>5. 动态详情页路由参数正确传递                                                        | ✅ 已实现   |
+| 2    | **SEO 优化**          | 1. 所有页面通过 `useSeo()` 统一设置 title / description / keywords<br>2. canonical + alternate（zh-CN / en / x-default）<br>3. Open Graph / Twitter Card 完整元数据<br>4. og:image 使用绝对路径<br>5. SSR 渲染确保爬虫能抓到正文内容<br>6. robots.txt + sitemap.xml | ✅ 已实现   |
+| 3    | **新闻页面缓存**      | 1. 新闻列表（前 50 条）服务端缓存<br>2. 新闻详情（前 20 条）预加载缓存<br>3. 每天凌晨 00:00 自动刷新缓存<br>4. 内存 + 文件双保险，服务重启不丢失<br>5. 搜索/翻页穿透走实时接口                                                                                      | ✅ 已实现   |
+| 4    | **SSR 服务端渲染**    | 1. 首屏关键内容（列表、详情、正文）必须 SSR<br>2. 禁止把核心数据放进 `onMounted` 再请求<br>3. `useFetch` / `useAsyncData` 必须加 `await`<br>4. 页面源码中能看到完整业务内容                                                                                         | ✅ 已实现   |
+| 5    | **响应式设计**        | 1. 桌面端 / 平板 / 手机三端适配<br>2. 导航栏移动端汉堡菜单<br>3. 图片自适应不溢出<br>4. 文字大小随屏宽调整<br>5. 间距和容器留白移动端收紧                                                                                                                           | ✅ 已实现   |
+| 6    | **国际化（i18n）**    | 1. 中文 + 英文双语完整覆盖<br>2. 所有可见文案走 `messages`，不硬编码<br>3. 语言切换不刷新页面<br>4. `LocaleMessages` 类型约束双语同步<br>5. 业务数据（产品、案例等）同时支持双语                                                                                    | ✅ 已实现   |
+| 7    | **PWA 支持**          | 1. 可安装到桌面 / 主屏<br>2. 静态资源离线缓存<br>3. 自动更新策略<br>4. API 接口排除在离线缓存外                                                                                                                                                                     | ✅ 已实现   |
+| 8    | **深色模式**          | 1. 明/暗主题一键切换<br>2. 跟随系统偏好<br>3. 所有页面和组件适配深色样式<br>4. 切换无闪烁、无布局跳动                                                                                                                                                               | ✅ 已实现   |
+| 9    | **性能优化**          | 1. 图片懒加载 + 合适尺寸<br>2. 组件按需 / 异步加载<br>3. 接口数据缓存减少重复请求<br>4. 首屏 LCP < 2.5s（目标）<br>5. 滚动入场动画不阻塞主线程                                                                                                                      | ✅ 部分实现 |
+| 10   | **安全防护**          | 1. XSS 防护（Vue 模板默认转义）<br>2. 第三方接口走服务端代理，不暴露 token<br>3. 用户输入内容适当转义/过滤<br>4. CSP 策略（按需开启）                                                                                                                               | ✅ 部分实现 |
+| 11   | **站点基础文件**      | 1. `favicon.ico` + 各尺寸 PWA 图标<br>2. `robots.txt` 爬虫规则<br>3. `sitemap.xml` 站点地图<br>4. `apple-touch-icon` iOS 图标                                                                                                                                       | ✅ 已实现   |
+| 12   | **交互动效**          | 1. 滚动入场动画（Reveal 组件）<br>2. 页面过渡动画<br>3. 悬停反馈（按钮、卡片、链接）<br>4. 导航栏滚动态切换                                                                                                                                                         | ✅ 已实现   |
+| 13   | **数据埋点**          | 1. 页面访问统计（pageview API）<br>2. 关键点击事件可扩展埋点<br>3. 不阻塞主线程                                                                                                                                                                                     | ✅ 基础实现 |
+| 14   | **代码规范**          | 1. ESLint 规则统一（@antfu/eslint-config）<br>2. TypeScript 类型完整<br>3. 组件 / composables / utils 自动导入<br>4. 单文件不超 700 行                                                                                                                              | ✅ 已实现   |
+| 15   | **无障碍访问 (a11y)** | 1. 语义化 HTML 标签<br>2. 图片 `alt` 属性<br>3. 按钮 / 链接可键盘聚焦<br>4. 颜色对比度达标                                                                                                                                                                          | ⚠️ 待加强   |
+| 16   | **浏览器兼容性**      | 1. Chrome / Safari / Firefox / Edge 最新版<br>2. iOS Safari / Android Chrome 移动端<br>3. 不支持的功能做优雅降级                                                                                                                                                    | ⚠️ 待验证   |
+
+**新增功能验收检查清单**：每次新增页面或功能后，对照以上能力项自查，确保不回退。
+
 ---
 
 ## 二、技术栈
 
-| 层级 | 技术选型 | 用途 |
-|------|---------|------|
-| 框架 | **Nuxt 4** | 服务端渲染 + 文件路由 + 自动导入 |
-| UI 框架 | **Vue 3** (`<script setup>` + Composition API) | 组件化开发 |
-| 语言 | **TypeScript** | 类型安全 |
-| 样式 | **UnoCSS** (Wind4 + Attributify + Icons + WebFonts) | 原子化 CSS |
-| 状态管理 | **Pinia** + Nuxt `useState` | 复杂/简单状态 |
-| 工具库 | **VueUse** (nuxt 模块自动导入) | Composition 工具函数 |
-| 服务端 | **Nitro** (Nuxt 内置) | API 代理层 |
-| PWA | **@vite-pwa/nuxt** | 离线访问 / 自动更新 |
-| 深色模式 | **@nuxtjs/color-mode** | 明暗主题切换 |
-| 代码规范 | **@antfu/eslint-config** | ESLint + 保存时自动修复 |
+| 层级     | 技术选型                                            | 用途                             |
+| -------- | --------------------------------------------------- | -------------------------------- |
+| 框架     | **Nuxt 4**                                          | 服务端渲染 + 文件路由 + 自动导入 |
+| UI 框架  | **Vue 3** (`<script setup>` + Composition API)      | 组件化开发                       |
+| 语言     | **TypeScript**                                      | 类型安全                         |
+| 样式     | **UnoCSS** (Wind4 + Attributify + Icons + WebFonts) | 原子化 CSS                       |
+| 状态管理 | **Pinia** + Nuxt `useState`                         | 复杂/简单状态                    |
+| 工具库   | **VueUse** (nuxt 模块自动导入)                      | Composition 工具函数             |
+| 服务端   | **Nitro** (Nuxt 内置)                               | API 代理层                       |
+| PWA      | **@vite-pwa/nuxt**                                  | 离线访问 / 自动更新              |
+| 深色模式 | **@nuxtjs/color-mode**                              | 明暗主题切换                     |
+| 代码规范 | **@antfu/eslint-config**                            | ESLint + 保存时自动修复          |
 
 ---
 
@@ -115,8 +140,11 @@ web官网/
 │   │       └── market/
 │   │           └── resource/
 │   │               └── list.get.ts # GET /api/open/market/resource/list（市场资源代理）
+│   ├── plugins/
+│   │   └── news-cache.ts           # Nitro 插件：启动新闻缓存定时调度器
 │   └── utils/
-│       └── dimens.ts               # Dimens SDK 封装（useDimensSDK / getDimensBaseUrl / 等）
+│       ├── dimens.ts               # Dimens SDK 封装（useDimensSDK / getDimensBaseUrl / 等）
+│       └── news-cache.ts           # 新闻缓存服务（预热 / 读取 / 写入 / 定时调度）
 ├── public/                          # 静态资源
 │   ├── static/                     # 图片资源
 │   ├── favicon.ico / robots.txt / sitemap.xml
@@ -140,16 +168,16 @@ web官网/
 
 Nuxt 4 文件路由，`app/pages/` 目录自动生成路由表：
 
-| 文件路径 | 路由路径 | 说明 |
-|---------|---------|------|
-| `app/pages/index.vue` | `/` | 首页，使用 `home` 布局 |
-| `app/pages/products.vue` | `/products` | 产品中心 |
-| `app/pages/product/dimens.vue` | `/product/dimens` | Dimens 产品页 |
-| `app/pages/product/[id].vue` | `/product/:id` | 通用产品详情（兜底） |
-| `app/pages/blog/index.vue` | `/blog` | 博客列表 |
-| `app/pages/blog/[id].vue` | `/blog/:id` | 博客详情 |
-| `app/pages/hi/[id].vue` | `/hi/:id` | 示例动态路由 |
-| `app/pages/[...all].vue` | `/*` | 404 通配路由 |
+| 文件路径                       | 路由路径          | 说明                   |
+| ------------------------------ | ----------------- | ---------------------- |
+| `app/pages/index.vue`          | `/`               | 首页，使用 `home` 布局 |
+| `app/pages/products.vue`       | `/products`       | 产品中心               |
+| `app/pages/product/dimens.vue` | `/product/dimens` | Dimens 产品页          |
+| `app/pages/product/[id].vue`   | `/product/:id`    | 通用产品详情（兜底）   |
+| `app/pages/blog/index.vue`     | `/blog`           | 博客列表               |
+| `app/pages/blog/[id].vue`      | `/blog/:id`       | 博客详情               |
+| `app/pages/hi/[id].vue`        | `/hi/:id`         | 示例动态路由           |
+| `app/pages/[...all].vue`       | `/*`              | 404 通配路由           |
 
 国际化路由由 `app/utils/localized-routes.ts` 在 `nuxt.config.ts` 的 `pages:extend` 钩子中自动生成：
 
@@ -159,14 +187,20 @@ Nuxt 4 文件路由，`app/pages/` 目录自动生成路由表：
 - 新增页面后，如需英文路由，必须把页面路径加入 `localized-routes.ts` 的 `routesWithEnglishPrefix`。
 
 **路由导航方式**：
+
 ```vue
 <script setup lang="ts">
 const localePath = useLocalePath()
 </script>
 
 <!-- NuxtLink 组件：站内链接必须走 localePath -->
-<NuxtLink :to="localePath('/products')">产品中心</NuxtLink>
-<NuxtLink :to="localePath(`/blog/${id}`)">详情</NuxtLink>
+<NuxtLink :to="localePath('/products')">
+产品中心
+</NuxtLink>
+
+<NuxtLink :to="localePath(`/blog/${id}`)">
+详情
+</NuxtLink>
 
 <!-- 编程式导航 -->
 const router = useRouter()
@@ -187,7 +221,7 @@ router.back()
 ```vue
 <script setup>
 definePageMeta({
-  layout: 'home'     // 可选: 'default' | 'home'，省略则使用 default
+  layout: 'home' // 可选: 'default' | 'home'，省略则使用 default
 })
 </script>
 ```
@@ -199,10 +233,18 @@ definePageMeta({
 ```vue
 <!-- 直接使用，PascalCase 命名 -->
 <AppHeader />
+
 <HeroSection />
+
 <SectionTitle title="核心能力" subtitle="产品特性说明" centered />
-<Reveal direction="down" :delay="0.2">内容</Reveal>
-<ProductPageLayout :product="product">子内容</ProductPageLayout>
+
+<Reveal direction="down" :delay="0.2">
+内容
+</Reveal>
+
+<ProductPageLayout :product="product">
+子内容
+</ProductPageLayout>
 ```
 
 ### 4.4 Composables 自动导入
@@ -236,6 +278,7 @@ const { count, inc, dec } = useCount()
 ### 4.5 状态管理模式
 
 **方式一：useState（轻量级，SSR 友好）**
+
 ```ts
 // app/composables/count.ts
 export function useCount() {
@@ -247,6 +290,7 @@ export function useCount() {
 ```
 
 **方式二：Pinia Store（复杂状态）**
+
 ```ts
 // app/composables/user.ts
 export const useUserStore = defineStore('user', () => {
@@ -301,6 +345,7 @@ useHead({
   },
 })
 </script>
+
 <template>
   <VitePwaManifest />
   <NuxtLayout>
@@ -348,15 +393,15 @@ export const productDetails: ProductDetail[] = [
 
 文件职责：
 
-| 文件 | 职责 |
-|------|------|
-| `app/i18n/schema.ts` | 定义 `LocaleMessages`，保证中英文文案结构一致 |
-| `app/i18n/locales/zh-CN.ts` | 中文文案与中文业务展示数据 |
-| `app/i18n/locales/en-US.ts` | 英文文案与英文业务展示数据 |
-| `app/i18n/utils.ts` | 语言常量、路径前缀、文案获取、分类映射等工具 |
-| `app/composables/useLocale.ts` | 当前语言、文案、语言切换入口 |
-| `app/composables/useLocalePath.ts` | 当前语言下的站内链接生成 |
-| `app/utils/localized-routes.ts` | 自动生成 `/en` 镜像路由 |
+| 文件                               | 职责                                          |
+| ---------------------------------- | --------------------------------------------- |
+| `app/i18n/schema.ts`               | 定义 `LocaleMessages`，保证中英文文案结构一致 |
+| `app/i18n/locales/zh-CN.ts`        | 中文文案与中文业务展示数据                    |
+| `app/i18n/locales/en-US.ts`        | 英文文案与英文业务展示数据                    |
+| `app/i18n/utils.ts`                | 语言常量、路径前缀、文案获取、分类映射等工具  |
+| `app/composables/useLocale.ts`     | 当前语言、文案、语言切换入口                  |
+| `app/composables/useLocalePath.ts` | 当前语言下的站内链接生成                      |
+| `app/utils/localized-routes.ts`    | 自动生成 `/en` 镜像路由                       |
 
 标准用法：
 
@@ -382,7 +427,9 @@ function toggleLanguage() {
   {{ messages.nav.products }}
 </NuxtLink>
 
-<h1>{{ messages.productsPage.title }}</h1>
+<h1>
+{{ messages.productsPage.title }}
+</h1>
 ```
 
 新增国际化文案流程：
@@ -470,12 +517,13 @@ server/api/
 ```
 
 **标准 API Handler 模板**：
+
 ```ts
 export default defineEventHandler(async (event) => {
   // 获取参数
-  const query = getQuery(event)           // URL 查询参数
-  const params = event.context.params!     // 路由参数
-  const body = await readBody(event)       // 请求体
+  const query = getQuery(event) // URL 查询参数
+  const params = event.context.params! // 路由参数
+  const body = await readBody(event) // 请求体
 
   try {
     const data = await $fetch('https://external-api.com/endpoint', {
@@ -508,14 +556,15 @@ export function useDimensSDK(token?: string) {
 }
 
 // 环境变量读取函数
-export function getDimensBaseUrl()      // DIMENS_BASE_URL
-export function getDimensTeamId()       // DIMENS_TEAM_ID
-export function getDimensProjectId()    // DIMENS_PROJECT_ID
-export function getDimensMarketToken()  // DIMENS_MARKET_TOKEN
+export function getDimensBaseUrl() // DIMENS_BASE_URL
+export function getDimensTeamId() // DIMENS_TEAM_ID
+export function getDimensProjectId() // DIMENS_PROJECT_ID
+export function getDimensMarketToken() // DIMENS_MARKET_TOKEN
 export function getDimensMarketBaseUrl()// DIMENS_MARKET_BASE_URL
 ```
 
 **API 代理中调用 SDK 的示例**（`server/api/dimens/news/list.post.ts`）：
+
 ```ts
 export default defineEventHandler(async (event) => {
   const baseUrl = getDimensBaseUrl()
@@ -538,6 +587,7 @@ export default defineEventHandler(async (event) => {
 ```
 
 **硬约束**:
+
 - Dimens SDK 只能在 `server/` 目录下使用
 - 环境变量通过 `server/utils/dimens.ts` 中的函数读取，不直接 `process.env`
 - API 接口统一通过代理方式暴露给前端（`useFetch('/api/dimens/news/list')`）
@@ -562,9 +612,114 @@ const res = await $fetch('/api/dimens/news/list', {
 })
 ```
 
-### 5.4 API 代理接收/过滤参数规范
+### 5.4 新闻缓存机制（定时 + 内存 + 文件双保险）
+
+为减少对 Dimens 接口的重复请求、提升首屏响应速度，新闻列表和详情实现了**服务端缓存**机制，核心文件：
+
+```
+server/
+├── utils/
+│   └── news-cache.ts        # 缓存核心：预热、读取、写入、定时调度
+├── plugins/
+│   └── news-cache.ts        # Nitro 插件：服务启动时自动启动调度器
+└── api/dimens/news/
+    ├── list.post.ts         # 列表接口：优先读缓存
+    └── [id].get.ts          # 详情接口：优先读缓存，未命中则回源并写入缓存
+```
+
+#### 缓存策略
+
+| 维度         | 说明                                                               |
+| ------------ | ------------------------------------------------------------------ |
+| **列表缓存** | 前 50 条新闻列表（`page=1` 且 `size ≤ 50` 且无 keyword）直接走缓存 |
+| **详情缓存** | 前 20 条新闻详情在预热时预加载；其余新闻首次访问后自动存入缓存     |
+| **定时刷新** | 每天凌晨 **00:00** 自动全量刷新缓存（重新拉取列表 + 前20条详情）   |
+| **双保险**   | 内存缓存 + Nitro `useStorage('cache')` 文件缓存，服务重启不丢失    |
+| **缓存穿透** | 关键词搜索、超过 50 条的翻页请求走实时接口，保证数据实时性         |
+
+#### 核心函数（`server/utils/news-cache.ts`，自动导入）
+
+```ts
+// 预热/刷新全部缓存
+await warmupNewsCache()
+
+// 读取列表缓存
+const { data, fromCache } = await getCachedNewsList()
+
+// 读取详情缓存
+const { data, fromCache } = await getCachedNewsDetail(id)
+
+// 手动写入单条详情缓存（穿透后回填）
+await saveNewsDetailToCache(id, data)
+
+// 启动/停止定时调度器
+startNewsCacheScheduler()
+stopNewsCacheScheduler()
+```
+
+#### API 接入模板（列表接口示例）
+
+```ts
+export default defineEventHandler(async (event) => {
+  const body = await readBody(event)
+  const page = body?.page || 1
+  const size = body?.size || 20
+  const keyword = body?.keyword || ''
+
+  // 符合缓存条件则优先走缓存
+  if (!keyword && page === 1 && size <= 50) {
+    const { data: cachedData, fromCache } = await getCachedNewsList()
+    if (fromCache && cachedData) {
+      const list = cachedData?.data?.list || []
+      return {
+        ...cachedData,
+        data: {
+          ...cachedData.data,
+          list: size > 0 ? list.slice(0, size) : list,
+          page: 1,
+          size,
+        },
+        _cached: true, // 标记来自缓存，方便调试
+      }
+    }
+  }
+
+  // 否则走实时接口
+  // ...
+})
+```
+
+#### 定时调度原理
+
+- 服务启动时通过 Nitro 插件（`server/plugins/news-cache.ts`）调用 `startNewsCacheScheduler()`
+- 立即执行一次 `warmupNewsCache()` 预热
+- 然后计算距离次日凌晨 00:00 的毫秒数，用 `setTimeout` 安排下一次刷新
+- 每次刷新完成后递归调度下一次，形成每日循环
+
+#### 新增其他类型数据缓存的范式
+
+如果后续需要为产品列表、案例等其他接口加缓存，按以下步骤：
+
+1. 在 `server/utils/` 下新增 `xxx-cache.ts`，仿照 `news-cache.ts` 实现：
+   - 内存变量 + `useStorage('cache')` 双存储
+   - `warmupXxxCache()` 预热函数
+   - `getCachedXxx()` 读取函数
+   - `saveXxxToCache()` 写入函数
+   - `startXxxCacheScheduler()` + `stopXxxCacheScheduler()` 定时调度
+2. 在 `server/plugins/` 下新增插件，启动时调用调度器
+3. 在对应 API Handler 中优先读缓存，未命中则回源并回填
+
+**判断是否该加缓存的原则**：
+
+- 数据更新频率低（日更或更低）
+- 请求量大、读远多于写
+- 接口响应慢或有调用频率限制
+- 不涉及用户个性化数据
+
+### 5.5 API 代理接收/过滤参数规范
 
 对外部 API 的代理接口支持以下标准参数（以 market resource 接口为例）：
+
 - `page` — 页码
 - `size` — 每页条数
 - `sideFilter` — 侧边栏筛选
@@ -579,12 +734,12 @@ const res = await $fetch('/api/dimens/news/list', {
 
 项目样式分为四层，新增样式时必须先判断归属：
 
-| 层级 | 位置 | 职责 |
-|------|------|------|
-| 全局基础层 | `app/assets/css/theme.css`（规划/可新增） | CSS 变量、基础重置、容器、按钮、卡片、标签等通用 UI 语言 |
-| 全局动效层 | `app/assets/css/animations.css` | keyframes、页面过渡类、可复用动画工具类 |
-| 工具类层 | `uno.config.ts` | UnoCSS preset、图标、字体、shortcuts |
-| 组件/页面层 | Vue `<style scoped>` 或独立 CSS | 单个组件/页面的专属布局、视觉和交互状态 |
+| 层级        | 位置                                      | 职责                                                     |
+| ----------- | ----------------------------------------- | -------------------------------------------------------- |
+| 全局基础层  | `app/assets/css/theme.css`（规划/可新增） | CSS 变量、基础重置、容器、按钮、卡片、标签等通用 UI 语言 |
+| 全局动效层  | `app/assets/css/animations.css`           | keyframes、页面过渡类、可复用动画工具类                  |
+| 工具类层    | `uno.config.ts`                           | UnoCSS preset、图标、字体、shortcuts                     |
+| 组件/页面层 | Vue `<style scoped>` 或独立 CSS           | 单个组件/页面的专属布局、视觉和交互状态                  |
 
 当前 `nuxt.config.ts` 已加载：
 
@@ -632,13 +787,13 @@ css: ['~/assets/css/theme.css', '~/assets/css/animations.css']
 
 `uno.config.ts` 配置了以下预设：
 
-| 预设 | 用途 |
-|------|------|
-| `presetWind4()` | Tailwind v4 兼容语法 |
+| 预设                  | 用途                                 |
+| --------------------- | ------------------------------------ |
+| `presetWind4()`       | Tailwind v4 兼容语法                 |
 | `presetAttributify()` | 属性化模式（如 `<div text="xl" />`） |
-| `presetIcons()` | Iconify 图标（Carbon / Twemoji） |
-| `presetTypography()` | 排版样式（prose） |
-| `presetWebFonts()` | Web 字体 |
+| `presetIcons()`       | Iconify 图标（Carbon / Twemoji）     |
+| `presetTypography()`  | 排版样式（prose）                    |
+| `presetWebFonts()`    | Web 字体                             |
 
 UnoCSS 的定位：
 
@@ -663,6 +818,7 @@ shortcuts: [
 ```vue
 <!-- 1. 原子化类名 -->
 <div class="px-10 py-20 text-center" />
+
 <div class="text-xl gray4 m-5 flex gap-3 justify-center" />
 
 <!-- 2. 属性化模式 -->
@@ -670,10 +826,12 @@ shortcuts: [
 
 <!-- 3. Iconify 图标 -->
 <div i-carbon-sun dark:i-carbon-moon />
+
 <div i-twemoji:waving-hand text-4xl />
 
 <!-- 4. 自定义快捷方式 -->
 <button btn />
+
 <div icon-btn />
 
 <!-- 5. 深色模式 -->
@@ -690,14 +848,14 @@ shortcuts: [
 
 新增样式按以下规则放置：
 
-| 场景 | 推荐位置 |
-|------|----------|
-| 品牌色、字号、间距、圆角、阴影等 token | `theme.css` |
-| 多个页面复用的按钮、卡片、标签、标题模式 | `theme.css` |
-| 多页面复用动画 | `animations.css` |
-| 单个组件专属布局 | 组件 `<style scoped>` |
-| 单页样式很长，影响 SFC 阅读 | 独立 CSS 文件并通过 scoped src 引入 |
-| 一次性布局和状态组合 | UnoCSS 类 |
+| 场景                                     | 推荐位置                            |
+| ---------------------------------------- | ----------------------------------- |
+| 品牌色、字号、间距、圆角、阴影等 token   | `theme.css`                         |
+| 多个页面复用的按钮、卡片、标签、标题模式 | `theme.css`                         |
+| 多页面复用动画                           | `animations.css`                    |
+| 单个组件专属布局                         | 组件 `<style scoped>`               |
+| 单页样式很长，影响 SFC 阅读              | 独立 CSS 文件并通过 scoped src 引入 |
+| 一次性布局和状态组合                     | UnoCSS 类                           |
 
 约束：
 
@@ -713,8 +871,8 @@ shortcuts: [
 
 ```ts
 const color = useColorMode()
-color.preference = 'dark'      // 切换到深色
-color.preference = 'light'     // 切换到浅色
+color.preference = 'dark' // 切换到深色
+color.preference = 'light' // 切换到浅色
 // 样式条件: dark:bg-gray-900 dark:text-white
 ```
 
@@ -724,14 +882,14 @@ color.preference = 'light'     // 切换到浅色
 
 配置位于 `app/config/pwa.ts`：
 
-| 特性 | 配置 |
-|------|------|
-| 注册策略 | `autoUpdate`（自动更新） |
+| 特性         | 配置                                                     |
+| ------------ | -------------------------------------------------------- |
+| 注册策略     | `autoUpdate`（自动更新）                                 |
 | Workbox 缓存 | JS/CSS/HTML/图片（`**/*.{js,css,html,txt,png,ico,svg}`） |
-| 运行时缓存 | Google Fonts（CacheFirst，365 天过期） |
-| 离线兜底 | `navigateFallback: '/'` |
-| API 排除 | `navigateFallbackDenylist: [/^\/api\//]` |
-| 开发模式 | 环境变量 `VITE_PLUGIN_PWA=true` 启用 |
+| 运行时缓存   | Google Fonts（CacheFirst，365 天过期）                   |
+| 离线兜底     | `navigateFallback: '/'`                                  |
+| API 排除     | `navigateFallbackDenylist: [/^\/api\//]`                 |
+| 开发模式     | 环境变量 `VITE_PLUGIN_PWA=true` 启用                     |
 
 ---
 
@@ -846,17 +1004,17 @@ useSeo({
 
 ## 十、构建与部署
 
-| 命令 | 用途 |
-|------|------|
-| `pnpm dev` | 开发模式（HMR，端口 3333） |
-| `pnpm dev:pwa` | 启用 PWA 的开发模式 |
-| `pnpm build` | 构建生产版本（SSR） |
-| `pnpm generate` | 构建静态导出 |
-| `pnpm preview` | 预览 SSR 构建结果 |
-| `pnpm start` | 启动 SSR 服务 |
-| `pnpm lint` | ESLint 检查 |
-| `pnpm typecheck` | TypeScript 类型检查 |
-| `pnpm exec nuxi prepare` | 生成 Nuxt 类型和路由类型 |
+| 命令                     | 用途                       |
+| ------------------------ | -------------------------- |
+| `pnpm dev`               | 开发模式（HMR，端口 3333） |
+| `pnpm dev:pwa`           | 启用 PWA 的开发模式        |
+| `pnpm build`             | 构建生产版本（SSR）        |
+| `pnpm generate`          | 构建静态导出               |
+| `pnpm preview`           | 预览 SSR 构建结果          |
+| `pnpm start`             | 启动 SSR 服务              |
+| `pnpm lint`              | ESLint 检查                |
+| `pnpm typecheck`         | TypeScript 类型检查        |
+| `pnpm exec nuxi prepare` | 生成 Nuxt 类型和路由类型   |
 
 开发服务规则：
 
@@ -899,6 +1057,7 @@ status = 200
 ### CI 流水线
 
 GitHub Actions（`.github/workflows/ci.yml`）：
+
 - main 分支 push / PR 时执行
 - 步骤：lint → typecheck
 
@@ -917,6 +1076,7 @@ GitHub Actions（`.github/workflows/ci.yml`）：
 const product = productDetails.find(p => p.id === 'workflow')!
 useSeo({ title: product.title, description: product.description })
 </script>
+
 <template>
   <ProductPageLayout :product="product">
     <!-- 自定义核心功能区块 -->
@@ -967,6 +1127,7 @@ useSeo({ title: product.title, description: product.description })
 ### AppHeader 滚动态
 
 导航栏根据滚动位置动态切换样式：
+
 - 首页顶部：透明背景 + 白色文字（与 Hero 融合）
 - 滚动后 / 其他页面：白色背景 + 阴影 + 深色文字
 - 桌面端：产品导航提供 Mega Menu 下拉
