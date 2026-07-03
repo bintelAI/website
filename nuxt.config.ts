@@ -48,6 +48,12 @@ export default defineNuxtConfig({
     port: 3333,
   },
 
+  vite: {
+    server: {
+      allowedHosts: ['.monkeycode-ai.online'],
+    },
+  },
+
   future: {
     compatibilityVersion: 4,
   },

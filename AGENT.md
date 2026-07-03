@@ -618,6 +618,8 @@ const res = await $fetch('/api/dimens/news/list', {
 
 ```
 server/
+├── api/
+│   └── cache.get.ts          # GET /api/cache：手动立即触发全量缓存刷新
 ├── utils/
 │   └── news-cache.ts        # 缓存核心：预热、读取、写入、定时调度
 ├── plugins/
@@ -636,17 +638,18 @@ server/
 | **定时刷新** | 每天凌晨 **00:00** 自动全量刷新缓存（重新拉取列表 + 前20条详情）   |
 | **双保险**   | 内存缓存 + Nitro `useStorage('cache')` 文件缓存，服务重启不丢失    |
 | **缓存穿透** | 关键词搜索、超过 50 条的翻页请求走实时接口，保证数据实时性         |
+| **手动刷新** | `GET /api/cache` 立即触发全量缓存刷新（列表 + 前 20 条详情），返回 JSON 确认 |
 
 #### 核心函数（`server/utils/news-cache.ts`，自动导入）
 
 ```ts
-// 预热/刷新全部缓存
+// 预热/刷新全部缓存（列表前50条 + 详情前20条）
 await warmupNewsCache()
 
-// 读取列表缓存
+// 读取列表缓存（内存优先 → 文件兜底）
 const { data, fromCache } = await getCachedNewsList()
 
-// 读取详情缓存
+// 读取详情缓存（内存优先 → 文件兜底）
 const { data, fromCache } = await getCachedNewsDetail(id)
 
 // 手动写入单条详情缓存（穿透后回填）
@@ -657,7 +660,19 @@ startNewsCacheScheduler()
 stopNewsCacheScheduler()
 ```
 
-#### API 接入模板（列表接口示例）
+#### 手动刷新接口
+
+`GET /api/cache`（`server/api/cache.get.ts`）—— 调用 `warmupNewsCache()`，立即刷新列表和详情缓存。返回：
+
+```json
+{ "success": true, "message": "新闻缓存已刷新", "timestamp": "2026-07-03T00:00:00.000Z" }
+```
+
+适用于：CMS 内容更新后不想等到凌晨 00:00，手动触发即时生效。
+
+#### API 接入模板
+
+**列表接口**（`server/api/dimens/news/list.post.ts`）—— 缓存命中返回 `_cached: true` 标记：
 
 ```ts
 export default defineEventHandler(async (event) => {
@@ -689,12 +704,47 @@ export default defineEventHandler(async (event) => {
 })
 ```
 
+**详情接口**（`server/api/dimens/news/[id].get.ts`）—— 缓存未命中则回源并自动回填：
+
+```ts
+export default defineEventHandler(async (event) => {
+  const { id } = event.context.params!
+
+  // 优先读缓存
+  const { data: cachedData, fromCache } = await getCachedNewsDetail(id)
+  if (fromCache && cachedData) {
+    return { ...cachedData, _cached: true }
+  }
+
+  // 回源请求
+  const data = await $fetch(`${baseUrl}/.../row/${id}/info`, { ... })
+
+  // 写入缓存（下次请求直接命中）
+  await saveNewsDetailToCache(id, data)
+  return data
+})
+```
+
 #### 定时调度原理
 
 - 服务启动时通过 Nitro 插件（`server/plugins/news-cache.ts`）调用 `startNewsCacheScheduler()`
 - 立即执行一次 `warmupNewsCache()` 预热
 - 然后计算距离次日凌晨 00:00 的毫秒数，用 `setTimeout` 安排下一次刷新
 - 每次刷新完成后递归调度下一次，形成每日循环
+- `isWarmingUp` 互斥锁防止并发预热
+
+#### 缓存存储键名
+
+| 存储键 | 说明 |
+|--------|------|
+| `news:list` | 列表缓存（page=1, size=50, 无 keyword 的完整响应） |
+| `news:detail:{rowId}` | 详情缓存（按 Dimens 行 ID 索引） |
+
+注意：预热时从列表项提取 ID 使用 `item.rowId`（Dimens API 返回的顶层字段），不是 `item.row.id`。
+
+#### `_cached` 响应标记
+
+缓存命中时 API 响应中携带 `_cached: true`，方便前端或调试工具识别数据来源：
 
 #### 新增其他类型数据缓存的范式
 

@@ -32,7 +32,7 @@ interface BlogPost {
   tags: string[]
 }
 
-const { data: postData, pending: loading, error } = await useFetch<any>(() => `/api/dimens/news/${id.value}`, {
+const { data: postData, pending: loading, error, refresh } = await useFetch<any>(() => `/api/dimens/news/${id.value}`, {
   method: 'GET',
 })
 
@@ -70,6 +70,10 @@ const errorMessage = computed(() => {
     return messages.value.blogPage.notFound
   return ''
 })
+
+function refreshPost() {
+  refresh()
+}
 
 useSeo({
   title: computed(() => post.value?.title || messages.value.blogPage.seoTitle),
@@ -138,13 +142,21 @@ function getCategoryLabel(category: string) {
         <p class="text-gray-500 mb-8">
           {{ errorMessage }}
         </p>
-        <NuxtLink
-          :to="localePath('/blog')"
-          class="text-white font-medium px-6 py-3 rounded-lg bg-blue-600 inline-flex gap-2 transition-colors items-center hover:bg-blue-700"
-        >
-          <span class="i-carbon-arrow-left" />
-          {{ messages.blogPage.backToList }}
-        </NuxtLink>
+        <div class="flex gap-3 justify-center">
+          <button
+            class="text-sm text-white font-medium px-6 py-3 rounded-lg bg-blue-600 transition-colors hover:bg-blue-700"
+            @click="refreshPost"
+          >
+            {{ messages.common.retry }}
+          </button>
+          <NuxtLink
+            :to="localePath('/blog')"
+            class="text-sm text-gray-600 font-medium px-6 py-3 rounded-lg bg-gray-100 inline-flex gap-2 transition-colors items-center hover:bg-gray-200"
+          >
+            <span class="i-carbon-arrow-left" />
+            {{ messages.blogPage.backToList }}
+          </NuxtLink>
+        </div>
       </div>
 
       <!-- 文章内容 -->

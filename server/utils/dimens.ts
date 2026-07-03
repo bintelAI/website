@@ -2,7 +2,7 @@ import { createSDK } from '@bintel/dimens-cli'
 
 /**
  * 创建 dimens SDK 实例
- * - baseUrl 支持自定义后端，默认 http://127.0.0.1:8001
+ * - baseUrl 支持自定义后端，默认 https://dimens.bintelai.com/api
  * - token 由调用方传入，不在此处硬编码
  */
 export function useDimensSDK(token?: string) {
@@ -14,7 +14,7 @@ export function useDimensSDK(token?: string) {
  * 获取 dimens 后端基础 URL
  */
 export function getDimensBaseUrl() {
-  return process.env.DIMENS_BASE_URL || 'http://127.0.0.1:8001'
+  return process.env.DIMENS_BASE_URL || 'https://dimens.bintelai.com/api'
 }
 
 /**
